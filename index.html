@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+    <title>Grove</title>
+
+    <!-- Styles -->
+    <link href="bootstrap.slate.min.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link href="site.css" rel="stylesheet">
+
+    <!-- Scripts -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script src="rot.min.js"></script> <!-- rev: b7c65505c102aead7f45e3d9790ede099c569ca2 -->
+
+    <script src="http://localhost:35729/livereload.js?snipver=1"></script>
+    <script src="objects/game.js"></script>
+    <script src="objects/screens.js"></script>
+    <script src="objects/glyph.js"></script>
+    <script src="objects/tile.js"></script>
+    <script src="objects/map.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            if (!ROT.isSupported()) {
+                alert("The rot.js library isn't supported by your browser. Sorry. :(");
+            } else {
+                // Prevent the window from scrolling when using arrow keys
+                window.addEventListener("keydown", function(e) {
+                    // space and arrow keys
+                    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+                        e.preventDefault();
+                    }
+                }, false);
+
+                Game.init();
+                $('#gamebox').append(Game.getDisplay().getContainer());
+                Game.switchScreen(Game.Screen.introScreen);                
+            }
+        });
+    </script>
+</head>
+<body>
+<!--     <div class="navbar">
+        <div class="navbar-inner">
+            <a class="brand" href="#">Grove</a>
+            <ul class="nav">
+                <li class="active"><a href="#">Home</a></li>
+            </ul>
+        </div>
+    </div> -->
+    <div class="container">
+        <div class="page-header" style="margin-bottom: 25px;">
+            <h1>GroveRTS <small>Missing the Forest for the Trees</small></h1>
+        </div>
+
+        <div id="gamebox" style="text-align: center;"></div>
+    </div>
+    <footer class="container text-center">
+        An entry for the Ludum Dare <a href="http://www.ludumdare.com/compo/category/minild/7drts-minild-44/">MiniLD #44 / 7dRTS</a> by <a href="https://github.com/toomuchpete/Grove">Pete Holiday</a>.
+    </footer>
+</body>
+</html>

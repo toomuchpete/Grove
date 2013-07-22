@@ -1,0 +1,9 @@
+
+html,body {
+    height: 100%;
+}
+
+footer {
+    border-top: 1px solid #1c1e22;
+    color: #7a8288;
+}
