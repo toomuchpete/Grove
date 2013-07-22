@@ -5,6 +5,8 @@ Gove is a real-time strategy game in which players grow stronger by tending to f
 
 Grove is an entry for the Ludum Dare [MiniLD #44 / 7dRTS](http://www.ludumdare.com/compo/category/minild/7drts-minild-44/) by [Pete Holiday](https://github.com/toomuchpete/Grove).
 
+Check out a current-ish version of the game [here](http://www.peteholiday.com/grove).
+
 
 ## Credits ##
 
