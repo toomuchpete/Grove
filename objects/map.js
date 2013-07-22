@@ -12,8 +12,18 @@ Game.Map.generate = function(width, height, border_size, air_buffer) {
     for (var x = 0; x < width; x++) {
         map.push([]);
         for (var y = 0; y < height; y++) {
-            map[x].push(new Game.Tile.land());
+            map[x].push(new Game.Tile.land(0));
         }
+    }
+
+    var map_generator = new ROT.Map.Cellular(width, height, {
+        born: [4,5,6,7,8],
+        survive: [2,3,4,5]
+    });
+        map_generator.randomize(0.95);
+
+    for (var i=29; i >= 0; i--) {
+        map_generator.create(i ? null : function(x,y,val) {map[x][y]._glyph._char = [' ', 'Y'][val];});
     }
 
     return new Game.Map(map);

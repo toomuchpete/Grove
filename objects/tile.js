@@ -7,7 +7,7 @@ Game.Tile.prototype.getGlyph = function() {
 };
 
 Game.Tile.land = function(chr_index) {
-    chr_options = ['.', ',', ' '];
+    chr_options = [' ', ',', '.'];
 
     if (chr_index == undefined || chr_index >= chr_options.length) {
         chr = chr_options.random();
