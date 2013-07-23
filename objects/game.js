@@ -1,16 +1,16 @@
 var Game = {
     _display: null,
     _currentScreen: null,
-    _displayWidth: 80,
+    _displayWidth: 100,
     _displayHeight: 35,
 
     init: function() {
-        this._display = new ROT.Display({width: this._displayWidth, height: this._displayHeight, fontSize: 15});
+        this._display = new ROT.Display({width: this._displayWidth, height: this._displayHeight});
 
         var game = this;
 
         var bindEventToScreen = function(event) {
-            window.addEventListener(event, function(e) {
+            addEventListener(event, function(e) {
                 // When an event is received, send it to the
                 // screen if there is one
                 if (game._currentScreen !== null) {
@@ -24,6 +24,8 @@ var Game = {
         }
 
         bindEventToScreen('keydown');
+        bindEventToScreen('click');
+        bindEventToScreen('touchstart');
         // bindEventToScreen('keyup');
         // bindEventToScreen('keypress');
     },

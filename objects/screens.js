@@ -11,16 +11,11 @@ Game.Screen.introScreen = {
 
     render: function(display) {
         display.drawText(1,1, "%c{yellow}Welcome to Grove!");
-        display.drawText(1,2, "Press [Enter] to start!");
+        display.drawText(1,2, "Click or press any key to start!");
     },
 
     handleInput: function(inputType, inputData) {
-        // When [Enter] is pressed, go to the play screen
-        if (inputType === 'keydown') {
-            if (inputData.keyCode === ROT.VK_RETURN) {
-                Game.switchScreen(Game.Screen.playScreen);
-            }
-        }
+       Game.switchScreen(Game.Screen.playScreen);
     }
 }
 
@@ -77,6 +72,7 @@ Game.Screen.playScreen = {
             return function() {                             //Return a function in the context of 'self'
                 self._map.tick();                           //Thing you wanted to run as non-window 'this'
                 self.render(Game.getDisplay());
+                Game.UI.render();
          }})(this), 1000);
     },
 
@@ -100,6 +96,16 @@ Game.Screen.playScreen = {
             } else if (inputData.keyCode === ROT.VK_DOWN) {
                 this.move(0, 1);
             }
-        }    
+        } else if (inputType === 'click' || inputType === 'touchstart') {
+            pos = Game.getDisplay().eventToPosition(inputData);
+
+            if (pos[0] != -1 && pos[1] != -1) {
+                Game.selected = this._map.getTile(pos[0], pos[1]);
+            } else {
+                Game.selected = null;
+            }
+
+            Game.UI.render();
+        }
     }
 }

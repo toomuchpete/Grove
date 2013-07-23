@@ -19,8 +19,9 @@
     <script src="objects/glyph.js"></script>
     <script src="objects/tile.js"></script>
     <script src="objects/map.js"></script>
+    <script src="objects/ui.js"></script>
 
-    
+
     
     <script type="text/javascript">
         $(function(){
@@ -37,7 +38,9 @@
 
                 Game.init();
                 $('#gamebox').append(Game.getDisplay().getContainer());
-                Game.switchScreen(Game.Screen.introScreen);                
+                Game.switchScreen(Game.Screen.introScreen);
+
+                Game.UI.element = $("#ui");
             }
         });
     </script>
@@ -56,12 +59,8 @@
             <h1>GroveRTS <small>Missing the Forest for the Trees</small></h1>
         </div>
 
-        <div class="row">
-            <div class="span2"><p>[UI goes here]</p></div>
-            <div class="span10">
-                <div id="gamebox" style="text-align: center;"></div>
-            </div>
-        </div>
+        <div id="ui"></div>
+        <div id="gamebox" style="text-align: center;"></div>
     </div>
     <footer class="container text-center">
         An entry for the Ludum Dare <a href="http://www.ludumdare.com/compo/category/minild/7drts-minild-44/">MiniLD #44 / 7dRTS</a> by <a href="https://github.com/toomuchpete/Grove">Pete Holiday</a>.

@@ -31,7 +31,7 @@ Game.Tile.tree = function(species_name, initial_stage, initial_stage_age) {
         {
             name: 'spawn',
             chr_index: 0,
-            glyph_color: '#c0c0c0',
+            glyph_color: '#d0d0c0',
             length: 12
         },
         {
