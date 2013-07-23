@@ -35,10 +35,21 @@ Game.Screen.playScreen = {
 
         if (this._map == null) {
             this._map = Game.Map.generate(200, 80, 1, 7);
+
+            for (var i = 0; i < 5; i++) {
+                x = Math.ceil(ROT.RNG.getUniform() * 30);
+                y = Math.ceil(ROT.RNG.getUniform() * 30);
+
+                if (this._map.getTile(x,y) instanceof Game.Tile.land) {
+                    this._map.addEntity(x,y, new Game.Tile.tree(['ironwood', 'rock_elm'].random(), [0,1,2].random(), [0,1,2,3,4].random()));        
+                }
+            }
+            this.startTimer();
         }
     },
     
     exit: function() {
+        clearInterval(this._timer);
         console.log("Exited play screen.");
     },
     
@@ -58,6 +69,15 @@ Game.Screen.playScreen = {
                     glyph.getBackground());
             }
         }
+    },
+
+    startTimer: function() {
+        // http://stackoverflow.com/questions/2749244/javascript-setinterval-and-this-solution
+        this._timer = setInterval((function(self) {         //Self-executing func which takes 'this' as self
+            return function() {                             //Return a function in the context of 'self'
+                self._map.tick();                           //Thing you wanted to run as non-window 'this'
+                self.render(Game.getDisplay());
+         }})(this), 1000);
     },
 
     move: function(dX, dY) {

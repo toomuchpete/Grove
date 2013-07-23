@@ -5,6 +5,7 @@ Game.Map = function(tiles) {
     // the tiles array
     this._width = tiles.length;
     this._height = tiles[0].length;
+    this._entities = [];
 };
 
 Game.Map.generate = function(width, height, border_size, air_buffer) {
@@ -12,27 +13,7 @@ Game.Map.generate = function(width, height, border_size, air_buffer) {
     for (var x = 0; x < width; x++) {
         map.push([]);
         for (var y = 0; y < height; y++) {
-            map[x].push(0);
-        }
-    }
-
-    var map_generator = new ROT.Map.Cellular(width, height, {
-        born: [4,5,6,7,8],
-        survive: [2,3,4,5]
-    });
-        map_generator.randomize(0.95);
-
-    for (var i=29; i >= 0; i--) {
-        map_generator.create(i ? null : function(x,y,val) { map[x][y] = val; });
-    }
-
-    for (var x = 0; x < width; x++) {
-        for (var y = 0; y < height; y++) {
-            if (map[x][y] == 0) {
-                map[x][y] = new Game.Tile.land(0);
-            } else {
-                map[x][y] = new Game.Tile.tree(['rock_elm', 'ironwood'].random());
-            }
+            map[x].push(new Game.Tile.land(0));
         }
     }
 
@@ -55,5 +36,16 @@ Game.Map.prototype.getTile = function(x, y) {
         return Game.Tile.air;
     } else {
         return this._tiles[x][y] || Game.Tile.air;
+    }
+};
+
+Game.Map.prototype.addEntity = function(x,y,entity) {
+    this._tiles[x][y] = entity;
+    this._entities.push(entity);
+}
+
+Game.Map.prototype.tick = function() {
+    for (var i = 0; i < this._entities.length; i++) {
+        this._entities[i].tick();
     }
 };

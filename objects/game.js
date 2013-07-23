@@ -1,11 +1,11 @@
 var Game = {
     _display: null,
     _currentScreen: null,
-    _displayWidth: 100,
-    _displayHeight: 40,
- 
+    _displayWidth: 80,
+    _displayHeight: 35,
+
     init: function() {
-        this._display = new ROT.Display({width: this._displayWidth, height: this._displayHeight});
+        this._display = new ROT.Display({width: this._displayWidth, height: this._displayHeight, fontSize: 15});
 
         var game = this;
 
