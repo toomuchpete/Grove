@@ -12,7 +12,7 @@ Game.Map.generate = function(width, height, border_size, air_buffer) {
     for (var x = 0; x < width; x++) {
         map.push([]);
         for (var y = 0; y < height; y++) {
-            map[x].push(new Game.Tile.land(0));
+            map[x].push(0);
         }
     }
 
@@ -23,7 +23,17 @@ Game.Map.generate = function(width, height, border_size, air_buffer) {
         map_generator.randomize(0.95);
 
     for (var i=29; i >= 0; i--) {
-        map_generator.create(i ? null : function(x,y,val) {map[x][y]._glyph._char = [' ', 'Y'][val];});
+        map_generator.create(i ? null : function(x,y,val) { map[x][y] = val; });
+    }
+
+    for (var x = 0; x < width; x++) {
+        for (var y = 0; y < height; y++) {
+            if (map[x][y] == 0) {
+                map[x][y] = new Game.Tile.land(0);
+            } else {
+                map[x][y] = new Game.Tile.tree(['rock_elm', 'ironwood'].random());
+            }
+        }
     }
 
     return new Game.Map(map);
