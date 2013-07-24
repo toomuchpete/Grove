@@ -2,11 +2,9 @@ Game.Screen = {}
 
 Game.Screen.introScreen = {
     enter: function() {
-        console.log("Entered start screen.");
     },
 
     exit: function() {
-        console.log("Left start screen.");
     },
 
     render: function(display) {
@@ -27,8 +25,6 @@ Game.Screen.playScreen = {
     _displayPosY: 0,
 
     enter: function() {
-        console.log("Entered play screen."); 
-
         if (this._map == null) {
             this._map = Game.Map.generate(200, 80, 1, 7);
 
@@ -38,7 +34,6 @@ Game.Screen.playScreen = {
     
     exit: function() {
         clearInterval(this._timer);
-        console.log("Exited play screen.");
     },
     
     render: function(display) {
