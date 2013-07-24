@@ -42,7 +42,7 @@
                 $('#gamebox').append(Game.getDisplay().getContainer());
                 Game.switchScreen(Game.Screen.introScreen);
 
-                Game.UI.element = $("#ui");
+                Game.UI.elements = {inspect: $("#ui-inspect")};
             }
         });
     </script>
@@ -61,7 +61,12 @@
             <h1>GroveRTS <small>Missing the Forest for the Trees</small></h1>
         </div>
 
-        <div id="ui"></div>
+        <div class="row" id="ui">
+            <div id="ui-inspect" class="panel span3"></div>
+            <div id="ui-status" class="panel span6"></div>
+            <div id="ui-actions" class="panel span3"></div>
+        </div>
+        
         <div id="gamebox" style="text-align: center;"></div>
     </div>
     <footer class="container text-center">

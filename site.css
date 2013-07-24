@@ -7,3 +7,7 @@ footer {
     border-top: 1px solid #1c1e22;
     color: #7a8288;
 }
+
+div#ui div.panel {
+    height: 80px;
+}

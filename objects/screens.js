@@ -21,6 +21,7 @@ Game.Screen.introScreen = {
 
 // Define our playing screen
 Game.Screen.playScreen = {
+    _tickTime: 250,
     _map: null,
     _displayPosX: 0,
     _displayPosY: 0,
@@ -73,7 +74,7 @@ Game.Screen.playScreen = {
                 self._map.tick();                           //Thing you wanted to run as non-window 'this'
                 self.render(Game.getDisplay());
                 Game.UI.render();
-         }})(this), 1000);
+         }})(this), this._tickTime);
     },
 
     move: function(dX, dY) {

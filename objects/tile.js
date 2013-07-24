@@ -23,22 +23,22 @@ Game.Tile.land.prototype = new Game.Tile();
 Game.Tile.tree = function(species_name, initial_stage, initial_stage_age) {
     this.stage_list = [
         {
-            name: 'sapling',
+            name: 'Sapling',
             chr_index: 0,
             glyph_color: '#808080',
-            length: 6
+            length: 120
         },
         {
-            name: 'spawn',
+            name: 'Spawn',
             chr_index: 0,
             glyph_color: '#d0d0c0',
-            length: 12
+            length: 120
         },
         {
-            name: 'spark',
+            name: 'Spark',
             chr_index: 1,
             glyph_color: '#FBEC5D',
-            length: 18
+            length: 120
         }
     ];
 
