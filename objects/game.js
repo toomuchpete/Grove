@@ -33,6 +33,10 @@ var Game = {
     getDisplay: function() {
         return this._display
     },
+    setDisplayWidth: function(w) {
+        this._displayWidth = w;
+        this._display.setOptions({width: w});
+    },
     getDisplayWidth: function() {
         return this._displayWidth;
     },

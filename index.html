@@ -38,6 +38,7 @@
                 }, false);
 
                 Game.init();
+                Game.setDisplayWidth(Game.getDisplay().computeSize($("#gamebox").width(),0)[0]);
                 $('#gamebox').append(Game.getDisplay().getContainer());
                 Game.switchScreen(Game.Screen.introScreen);
 
