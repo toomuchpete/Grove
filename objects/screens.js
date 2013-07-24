@@ -100,10 +100,16 @@ Game.Screen.playScreen = {
         } else if (inputType === 'click' || inputType === 'touchstart') {
             pos = Game.getDisplay().eventToPosition(inputData);
 
+            if (Game.selected) {
+                Game.selected.getGlyph().toggleSelected();
+            }
+
             if (pos[0] != -1 && pos[1] != -1) {
                 Game.selected = this._map.getTile(pos[0], pos[1]);
+                Game.selected.getGlyph().toggleSelected();
             } else {
                 Game.selected = null;
+
             }
 
             Game.UI.render();

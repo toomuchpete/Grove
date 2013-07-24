@@ -15,7 +15,7 @@ Game.Tile.land = function(chr_index) {
         chr = chr_options[chr_index];
     }
     
-    this._glyph = new Game.Glyph(chr, '#526F35', '#3B5323');
+    this._glyph = new Game.Glyph(chr, '#526F35', '#3B5323', '#2C3D1A');
 }
 
 Game.Tile.land.prototype = new Game.Tile();
@@ -89,9 +89,10 @@ Game.Tile.tree.prototype.grow = function() {
 }
 
 Game.Tile.tree.prototype.updateGlyph = function() {
-    this._glyph._char       = this.species.chr[this.stage.chr_index];
-    this._glyph._foreground = this.stage.glyph_color;
-    this._glyph._background = '#3B5323';
+    this._glyph._char               = this.species.chr[this.stage.chr_index];
+    this._glyph._foreground         = this.stage.glyph_color;
+    this._glyph._background         = '#3B5323';
+    this._glyph._selectedBackground = '#2C3D1A';
 }
 
 Game.Tile.tree.prototype.stageLength = function() {
