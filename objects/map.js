@@ -33,11 +33,25 @@ Game.Map.prototype.getTile = function(x, y) {
     // Make sure we are inside the bounds. If we aren't, return
     // null tile.
     if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
-        return Game.Tile.air;
+        return null;
     } else {
-        return this._tiles[x][y] || Game.Tile.air;
+        return this._tiles[x][y];
     }
 };
+
+Game.Map.prototype.setTile = function(x, y, tile, addEntity) {
+    if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
+        console.log("Illegal tile coordinates");
+    } else {
+        this._tiles[x][y] = tile;
+
+        if (addEntity) {
+            this.addEntity(x,y,tile);
+        }
+    }
+}
+
+// TODO: removeEntity() as well as automatic culling of entities replaced in the game
 
 Game.Map.prototype.addEntity = function(x,y,entity) {
     this._tiles[x][y] = entity;

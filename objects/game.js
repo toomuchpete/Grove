@@ -79,6 +79,10 @@ var Game = {
         return this._commandMode;
     },
 
+    getCommandOpts: function() {
+        return this._commandOpts;
+    },
+
     selectTile: function(tile) {
         if (Game._selectedTile) {
             Game._selectedTile.getGlyph().toggleSelected();

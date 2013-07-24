@@ -21,7 +21,3 @@ div#ui {
 canvas {
     cursor: crosshair;
 }
-
-canvas.commandMode-harvest {
-    cursor: url(images/pinch_cursor.png), default;
-}

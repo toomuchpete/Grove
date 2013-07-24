@@ -91,14 +91,37 @@ Game.Screen.playScreen = {
         } else if (inputType === 'click' || inputType === 'touchstart') {
             var pos = Game.getDisplay().eventToPosition(inputData);
 
-            if (Game.getCommandMode() == 'select') {
+            var mode = Game.getCommandMode();
+            var opts = Game.getCommandOpts();
+
+            if (mode == 'select') {
                 if (pos[0] != -1 && pos[1] != -1) {
                     Game.selectTile(this._map.getTile(pos[0], pos[1]));
                 } else {
                     Game.selectTile();
                 }
-            } else {
-                console.log(Game.getCommandMode());
+            } else if (mode == 'harvest') {
+                if (pos[0] != -1 && pos[1] != -1) {
+                    if (this._map.getTile(pos[0], pos[1]) instanceof Game.Tile.land) {
+                        Game.Sounds.error.play();
+                    } else {
+                        this._map.setTile(pos[0], pos[1], new Game.Tile.land(0));
+                        Game.Sounds.harvest.play();
+                    }
+                } else {
+                    Game.Sounds.error.play();
+                }
+            } else if (mode == 'plant') {
+                if (pos[0] != -1 && pos[1] != -1) {
+                    if (!(this._map.getTile(pos[0], pos[1]) instanceof Game.Tile.land)) {
+                        Game.Sounds.error.play();
+                    } else {
+                        this._map.setTile(pos[0], pos[1], new Game.Tile.tree(opts.target), true);
+                        Game.Sounds.plant.play();
+                    }
+                } else {
+                    Game.Sounds.error.play();
+                }
             }
 
             Game.UI.render();
