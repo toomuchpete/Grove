@@ -15,3 +15,5 @@ Check out a current-ish version of the game [here](http://www.peteholiday.com/gr
  - [FontAwesome](http://fortawesome.github.io/Font-Awesome/)
  - [Bootswatch](http://bootswatch.com/)
  - CodingCookies.com [Build a RL Tutorial](http://www.codingcookies.com/category/build-a-rl/)
+ - [Buzz](http://buzz.jaysalvat.com/), a Javascript HTML5 Audio Library
+ - [Freesound.org](http://www.freesound.org/people/Nomadyag/sounds/193058/)

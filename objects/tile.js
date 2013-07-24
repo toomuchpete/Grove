@@ -84,6 +84,7 @@ Game.Tile.tree.prototype.grow = function() {
 
         // Update glyph, so changes are reflected on the screen
         this.updateGlyph();
+        Game.Sounds.growth.play();
     }
 }
 
