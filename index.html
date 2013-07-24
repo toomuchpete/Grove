@@ -44,6 +44,16 @@
                 Game.switchScreen(Game.Screen.introScreen);
 
                 Game.UI.elements = {inspect: $("#ui-inspect")};
+
+                $(".action-menu").on('click', 'a', null, function(e) {
+                    var action = $(e.delegateTarget).data('action');
+                    var target = $(this).data('target');
+
+                    if (action == 'plant' || action == 'harvest') {
+                        Game.selectTile();
+                        Game.setCommandMode(action, {target: target});
+                    }
+                });
             }
         });
     </script>
@@ -63,13 +73,30 @@
         </div>
 
         <div class="row" id="ui">
-            <div class="span3"><div id="ui-inspect" class="panel"></div></div>
-            <div class="span6"><div id="ui-status"  class="panel"></div></div>
             <div class="span3"><div id="ui-actions" class="panel">
-                
+                <div class="btn-group hide" id="action-buttons">
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Action <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-submenu">
+                            <a>Plant</a>
+                            <ul class="dropdown-menu action-menu" data-action="plant">
+                                <li><a data-target="ironwood">Ironwood</a></li>
+                                <li><a data-target="rock_elm">Rock Elm</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown-submenu">
+                            <a>Harvest</a>
+                            <ul class="dropdown-menu action-menu" data-action="harvest">
+                                <li><a data-target="ironwood">Ironwood</a></li>
+                                <li><a data-target="rock_elm">Rock Elm</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>                    
             </div></div>
+            <div class="span6"><div id="ui-status"  class="panel"></div></div>
+            <div class="span3"><div id="ui-inspect" class="panel"></div></div>
         </div>
-
         <div id="gamebox" style="text-align: center;"></div>
     </div>
     <footer class="container text-center">

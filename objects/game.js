@@ -4,6 +4,8 @@ var Game = {
     _displayWidth: 100,
     _displayHeight: 35,
     _commandMode: null,
+    _commandOpts: {},
+    _selectedTile: null,
 
     init: function() {
         this._display = new ROT.Display({width: this._displayWidth, height: this._displayHeight, fontFamily: 'Ubuntu Mono'});
@@ -29,6 +31,8 @@ var Game = {
         bindEventToScreen('touchstart');
         // bindEventToScreen('keyup');
         // bindEventToScreen('keypress');
+
+        this.setCommandMode('select');
     },
 
     getDisplay: function() {
@@ -63,10 +67,30 @@ var Game = {
         }
     },
 
-    setCommandMode: function(mode) {
-        this._commandMode = mode;
+    setCommandMode: function(mode, options) {
+        $(this._display.getContainer()).removeClass('commandMode-'+this._commandMode);
+
+        this._commandMode = mode || 'select';
+        this._commandOpts = options || {};
+
+        $(this._display.getContainer()).addClass('commandMode-'+this._commandMode);
     },
     getCommandMode: function() {
         return this._commandMode;
+    },
+
+    selectTile: function(tile) {
+        if (Game._selectedTile) {
+            Game._selectedTile.getGlyph().toggleSelected();
+        }
+
+        Game._selectedTile = tile;
+
+        if (tile) {
+            tile.getGlyph().toggleSelected();
+        }
+    },
+    getSelectedTile: function() {
+        return this._selectedTile;
     }
 }

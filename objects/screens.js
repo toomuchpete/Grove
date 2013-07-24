@@ -25,6 +25,8 @@ Game.Screen.playScreen = {
     _displayPosY: 0,
 
     enter: function() {
+        $("#action-buttons").fadeIn()
+
         if (this._map == null) {
             this._map = Game.Map.generate(200, 80, 1, 7);
 
@@ -83,20 +85,20 @@ Game.Screen.playScreen = {
                 this.move(0, -1);
             } else if (inputData.keyCode === ROT.VK_DOWN) {
                 this.move(0, 1);
+            } else if (inputData.keyCode === ROT.VK_ESCAPE) {
+                Game.setCommandMode('select');
             }
         } else if (inputType === 'click' || inputType === 'touchstart') {
-            pos = Game.getDisplay().eventToPosition(inputData);
+            var pos = Game.getDisplay().eventToPosition(inputData);
 
-            if (Game.selected) {
-                Game.selected.getGlyph().toggleSelected();
-            }
-
-            if (pos[0] != -1 && pos[1] != -1) {
-                Game.selected = this._map.getTile(pos[0], pos[1]);
-                Game.selected.getGlyph().toggleSelected();
+            if (Game.getCommandMode() == 'select') {
+                if (pos[0] != -1 && pos[1] != -1) {
+                    Game.selectTile(this._map.getTile(pos[0], pos[1]));
+                } else {
+                    Game.selectTile();
+                }
             } else {
-                Game.selected = null;
-
+                console.log(Game.getCommandMode());
             }
 
             Game.UI.render();

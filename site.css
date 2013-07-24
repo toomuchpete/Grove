@@ -17,3 +17,11 @@ div#ui div.panel {
 div#ui {
     margin-bottom: 10px;
 }
+
+canvas {
+    cursor: crosshair;
+}
+
+canvas.commandMode-harvest {
+    cursor: url(images/pinch_cursor.png), default;
+}
