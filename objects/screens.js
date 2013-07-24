@@ -32,14 +32,6 @@ Game.Screen.playScreen = {
         if (this._map == null) {
             this._map = Game.Map.generate(200, 80, 1, 7);
 
-            for (var i = 0; i < 5; i++) {
-                x = Math.ceil(ROT.RNG.getUniform() * 30);
-                y = Math.ceil(ROT.RNG.getUniform() * 30);
-
-                if (this._map.getTile(x,y) instanceof Game.Tile.land) {
-                    this._map.addEntity(x,y, new Game.Tile.tree(['ironwood', 'rock_elm'].random(), [0,1,2].random(), [0,1,2,3,4].random()));        
-                }
-            }
             this.startTimer();
         }
     },

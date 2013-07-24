@@ -10,4 +10,10 @@ footer {
 
 div#ui div.panel {
     height: 80px;
+    background-color: #32373D;
+    padding: 3px;
+}
+
+div#ui {
+    margin-bottom: 10px;
 }

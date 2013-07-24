@@ -3,14 +3,15 @@ var Game = {
     _currentScreen: null,
     _displayWidth: 100,
     _displayHeight: 35,
+    _commandMode: null,
 
     init: function() {
-        this._display = new ROT.Display({width: this._displayWidth, height: this._displayHeight});
+        this._display = new ROT.Display({width: this._displayWidth, height: this._displayHeight, fontFamily: 'Ubuntu Mono'});
 
         var game = this;
 
-        var bindEventToScreen = function(event) {
-            addEventListener(event, function(e) {
+        var bindEventToScreen = function(event, element) {
+            (element || window).addEventListener(event, function(e) {
                 // When an event is received, send it to the
                 // screen if there is one
                 if (game._currentScreen !== null) {
@@ -24,7 +25,7 @@ var Game = {
         }
 
         bindEventToScreen('keydown');
-        bindEventToScreen('click');
+        bindEventToScreen('click', this._display.getContainer());
         bindEventToScreen('touchstart');
         // bindEventToScreen('keyup');
         // bindEventToScreen('keypress');
@@ -33,6 +34,7 @@ var Game = {
     getDisplay: function() {
         return this._display
     },
+
     setDisplayWidth: function(w) {
         this._displayWidth = w;
         this._display.setOptions({width: w});
@@ -40,6 +42,7 @@ var Game = {
     getDisplayWidth: function() {
         return this._displayWidth;
     },
+
     getDisplayHeight: function() {
         return this._displayHeight;
     },
@@ -58,5 +61,12 @@ var Game = {
             this._currentScreen.enter();
             this._currentScreen.render(this._display);
         }
+    },
+
+    setCommandMode: function(mode) {
+        this._commandMode = mode;
+    },
+    getCommandMode: function() {
+        return this._commandMode;
     }
 }
