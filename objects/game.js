@@ -72,6 +72,8 @@ var Game = {
     setCommandMode: function(mode, options) {
         $(this._display.getContainer()).removeClass('commandMode-'+this._commandMode);
 
+        Game.selectTile();
+
         this._commandMode = mode || 'select';
         this._commandOpts = options || {};
 

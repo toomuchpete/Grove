@@ -133,6 +133,22 @@ Game.Screen.playScreen = {
                 this.move(0, 1);
             } else if (inputData.keyCode === ROT.VK_ESCAPE) {
                 Game.setCommandMode('select');
+            } else if (inputData.keyCode == ROT.VK_H) {
+                Game.setCommandMode('harvest');
+            } else if (inputData.keyCode == ROT.VK_P) {
+                Game.setCommandMode('plant');
+            } else if (Game.getCommandMode() == 'plant' && !Game.getCommandOpts().target) {
+                switch (inputData.keyCode) {
+                    case ROT.VK_I:
+                        Game.setCommandMode('plant', {target: 'ironwood'});
+                        break;
+                    case ROT.VK_R:
+                        Game.setCommandMode('plant', {target: 'rock_elm'});
+                        break;
+                    default:
+                        Game.setCommandMode('select');
+                        break;
+                }
             }
         } else if (inputType === 'click' || inputType === 'touchstart') {
             var pos = this.eventToPosition(inputData);

@@ -51,7 +51,6 @@
                     var target = $(this).data('target');
 
                     if (action == 'plant' || action == 'harvest') {
-                        Game.selectTile();
                         Game.setCommandMode(action, {target: target});
                     }
                 });
