@@ -1,3 +1,14 @@
+String.prototype.repeat = function(n) {
+    var x = this;
+    var s = '';
+    for (;;) {
+        if (n & 1) { s += x; }
+        n >>= 1;
+        if (n) { x += x; } else { break; }
+    }
+    return s;
+}
+
 Game.Screen = {}
 
 Game.Screen.introScreen = {
@@ -39,8 +50,10 @@ Game.Screen.playScreen = {
     },
     
     render: function(display) {
+        display.clear();
+
         var displayWidth = Game.getDisplayWidth();
-        var displayHeight = Game.getDisplayHeight();
+        var displayHeight = Game.getDisplayHeight()-1;
         var offsetX = this._displayPosX;
         var offsetY = this._displayPosY
 
@@ -54,6 +67,29 @@ Game.Screen.playScreen = {
                     glyph.getBackground());
             }
         }
+
+        var statusText = '---';
+
+        var cMode = Game.getCommandMode();
+        var cOpts = Game.getCommandOpts();
+        
+        switch (cMode) {
+            case 'select':
+                statusText = 'Click a tile to see information about it.';
+                break;
+            case 'plant':
+                if (cOpts.target) {
+                    statusText = "Click to plant: " + cOpts.target + " (" + Game.Inventory.getItemCount(cOpts.target + "_seeds") + " remaining)";
+                }
+                break;
+            case 'harvest':
+                statusText = 'Click a tree to harvest it.';
+            default:
+                statusText = "Command mode: " + cMode;
+                break;
+        }
+
+        display.drawText(1, displayHeight, statusText, displayWidth-2);
     },
 
     startTimer: function() {
