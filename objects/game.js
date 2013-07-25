@@ -33,6 +33,8 @@ var Game = {
         // bindEventToScreen('keypress');
 
         this.setCommandMode('select');
+        Game.Inventory.addItem('ironwood_seeds', 2);
+        Game.Inventory.addItem('rock_elm_seeds', 2);
     },
 
     getDisplay: function() {

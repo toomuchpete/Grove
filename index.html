@@ -20,6 +20,7 @@
     <script src="objects/glyph.js"></script>
     <script src="objects/tile.js"></script>
     <script src="objects/map.js"></script>
+    <script src="objects/inventory.js"></script>
     <script src="objects/ui.js"></script>
     <script src="objects/sound.js"></script>
 
@@ -80,8 +81,8 @@
                         <li class="dropdown-submenu">
                             <a><i class="icon-leaf"></i> Plant</a>
                             <ul class="dropdown-menu action" data-action="plant">
-                                <li><a data-target="ironwood">Ironwood</a></li>
-                                <li><a data-target="rock_elm">Rock Elm</a></li>
+                                <li><a data-target="ironwood">Ironwood (<span class="ironwood_seeds_count inventory_count">-</span>)</a></li>
+                                <li><a data-target="rock_elm">Rock Elm (<span class="rock_elm_seeds_count inventory_count">-</span>)</a></li>
                             </ul>
                         </li>
                         <li data-action="harvest" class="action"><a><i class="icon-truck"></i> Harvest</a></li>

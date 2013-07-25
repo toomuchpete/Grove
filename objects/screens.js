@@ -121,7 +121,7 @@ Game.Screen.playScreen = {
                     Game.Sounds.error.play();
                 }
             } else if (mode == 'plant') {
-                if (pos) {
+                if (pos && Game.Inventory.removeItem(opts.target + "_seeds") !== false) {
                     if (!(this._map.getTile(pos[0], pos[1]) instanceof Game.Tile.land)) {
                         Game.Sounds.error.play();
                     } else {

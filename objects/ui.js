@@ -28,5 +28,17 @@ Game.UI = {
                 this.elements.inspect.html("<strong>Planting</strong>: Press escape to return to inspect mode.");
             }
         }
+
+        var inv = Game.Inventory.getInventory();
+        var obj_types = Object.keys(inv);
+        var all_counters = '.inventory_count';
+
+        $(all_counters).html("0");
+
+        for (i = 0; i < obj_types.length; i++) {
+            var counter = all_counters + '.' + obj_types[i] + '_count';
+
+            $(counter).html(inv[obj_types[i]]);
+        }
     }
 }
