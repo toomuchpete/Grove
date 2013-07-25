@@ -80,6 +80,8 @@ Game.Screen.playScreen = {
             case 'plant':
                 if (cOpts.target) {
                     statusText = "Click to plant: " + cOpts.target + " (" + Game.Inventory.getItemCount(cOpts.target + "_seeds") + " remaining)";
+                } else {
+                    statusText = "Choose a type of tree to plant: Ironwood (i) or Rock Elm (r)";
                 }
                 break;
             case 'harvest':
