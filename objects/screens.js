@@ -73,6 +73,15 @@ Game.Screen.playScreen = {
         this._displayPosX = Math.max(0, Math.min(this._map.getWidth() - displayWidth, this._displayPosX + dX));
         this._displayPosY = Math.max(0, Math.min(this._map.getHeight() - displayHeight, this._displayPosY + dY));
     },
+
+    eventToPosition: function(e) {
+        var pos = Game.getDisplay().eventToPosition(e);
+        if (pos[0] >= 0 && pos[1] >= 0) {
+            return [pos[0]+this._displayPosX, pos[1]+this._displayPosY];
+        } else {
+            return false;
+        }
+    },
     
     handleInput: function(inputType, inputData) {
         if (inputType === 'keydown') {
@@ -89,19 +98,19 @@ Game.Screen.playScreen = {
                 Game.setCommandMode('select');
             }
         } else if (inputType === 'click' || inputType === 'touchstart') {
-            var pos = Game.getDisplay().eventToPosition(inputData);
+            var pos = this.eventToPosition(inputData);
 
             var mode = Game.getCommandMode();
             var opts = Game.getCommandOpts();
 
             if (mode == 'select') {
-                if (pos[0] != -1 && pos[1] != -1) {
+                if (pos) {
                     Game.selectTile(this._map.getTile(pos[0], pos[1]));
                 } else {
                     Game.selectTile();
                 }
             } else if (mode == 'harvest') {
-                if (pos[0] != -1 && pos[1] != -1) {
+                if (pos) {
                     if (this._map.getTile(pos[0], pos[1]) instanceof Game.Tile.land) {
                         Game.Sounds.error.play();
                     } else {
@@ -112,7 +121,7 @@ Game.Screen.playScreen = {
                     Game.Sounds.error.play();
                 }
             } else if (mode == 'plant') {
-                if (pos[0] != -1 && pos[1] != -1) {
+                if (pos) {
                     if (!(this._map.getTile(pos[0], pos[1]) instanceof Game.Tile.land)) {
                         Game.Sounds.error.play();
                     } else {
