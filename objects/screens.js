@@ -125,7 +125,7 @@ Game.Screen.playScreen = {
                     if (!(this._map.getTile(pos[0], pos[1]) instanceof Game.Tile.land)) {
                         Game.Sounds.error.play();
                     } else {
-                        this._map.setTile(pos[0], pos[1], new Game.Tile.tree(opts.target), true);
+                        this._map.setTile(pos[0], pos[1], new Game.Tile.tree(opts.target));
                         Game.Sounds.plant.play();
                     }
                 } else {

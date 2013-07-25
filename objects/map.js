@@ -43,15 +43,27 @@ Game.Map.prototype.setTile = function(x, y, tile, addEntity) {
     if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
         console.log("Illegal tile coordinates");
     } else {
+        if (this._tiles[x][y].isEntity()) {
+            this.removeEntity(this._tiles[x][y]);    
+        }
+        
         this._tiles[x][y] = tile;
 
-        if (addEntity) {
-            this.addEntity(x,y,tile);
+        if (tile.isEntity()) {
+            this.addEntity(x,y,tile);    
         }
     }
 }
 
-// TODO: removeEntity() as well as automatic culling of entities replaced in the game
+Game.Map.prototype.removeEntity = function(entity) {
+    var i = this._entities.indexOf(entity);
+
+    if (i >= 0) {
+        this._entities.splice(i, 1);
+    } else {
+        return false;
+    }
+}
 
 Game.Map.prototype.addEntity = function(x,y,entity) {
     this._tiles[x][y] = entity;

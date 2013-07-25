@@ -1,10 +1,15 @@
 Game.Tile = function(glyph) {
+    this._entity = false;
     this._glyph = glyph;
 };
 
 Game.Tile.prototype.getGlyph = function() {
     return this._glyph;
 };
+
+Game.Tile.prototype.isEntity = function() {
+    return this._entity;
+}
 
 Game.Tile.land = function(chr_index) {
     chr_options = [' ', ',', '.'];
@@ -21,6 +26,7 @@ Game.Tile.land = function(chr_index) {
 Game.Tile.land.prototype = new Game.Tile();
 
 Game.Tile.tree = function(species_name, initial_stage, initial_stage_age) {
+    this._entity = true;
     this.stage_list = [
         {
             name: 'Sapling',
