@@ -84,6 +84,7 @@ Game.Screen.playScreen = {
                 break;
             case 'harvest':
                 statusText = 'Click a tree to harvest it.';
+                break;
             default:
                 statusText = "Command mode: " + cMode;
                 break;
