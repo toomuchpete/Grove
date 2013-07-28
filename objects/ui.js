@@ -31,14 +31,27 @@ Game.UI = {
 
         var inv = Game.Inventory.getInventory();
         var obj_types = Object.keys(inv);
-        var all_counters = '.inventory_count';
+        var inv_counters = '.inventory_count';
+        var aura_counters = '.aura_count';
 
-        $(all_counters).html("0");
+        $(inv_counters + ',' + aura_counters).html("0");
 
         for (i = 0; i < obj_types.length; i++) {
-            var counter = all_counters + '.' + obj_types[i] + '_count';
+            var counter = inv_counters + '.' + obj_types[i] + '_count';
 
             $(counter).html(inv[obj_types[i]]);
+        }
+
+        var auras = Game.Aura.getAuras();
+
+        for (var stat in auras) {
+            if (!auras.hasOwnProperty(stat)) {
+                continue;
+            }
+
+            var counter = aura_counters + '.' + stat + '_count';
+
+            $(counter).html(auras[stat]);
         }
     }
 }

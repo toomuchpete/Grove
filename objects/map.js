@@ -74,4 +74,6 @@ Game.Map.prototype.tick = function() {
     for (var i = 0; i < this._entities.length; i++) {
         this._entities[i].tick();
     }
+
+    Game.Aura.calculateAuras();
 };

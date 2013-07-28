@@ -69,6 +69,10 @@ var Game = {
         }
     },
 
+    getScreen: function() {
+        return this._currentScreen;
+    },
+
     setCommandMode: function(mode, options) {
         $(this._display.getContainer()).removeClass('commandMode-'+this._commandMode);
 

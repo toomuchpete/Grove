@@ -33,35 +33,40 @@ Game.Tile.tree = function(species_name, initial_stage, initial_stage_age) {
             chr_index: 0,
             glyph_color: '#808080',
             length: 20,
-            harvest: {}
+            harvest: {},
+            aura_strength: 0
         },
         {
             name: 'Spawn',
             chr_index: 0,
             glyph_color: '#d0d0c0',
             length: 20,
-            harvest: {seeds: 2}
+            harvest: {seeds: 2},
+            aura_strength: 0
         },
         {
             name: 'Spark',
             chr_index: 1,
             glyph_color: '#FBEC5D',
             length: 20,
-            harvest: {wood: 1, seeds: 1}
+            harvest: {wood: 1, seeds: 1},
+            aura_strength: 1
         },
         {
             name: 'Adolescent',
             chr_index: 1,
             glyph_color: '#9BBF10',
             length: 20,
-            harvest: {wood: 2, resource: 1, seeds: 1}
+            harvest: {wood: 2, resource: 1, seeds: 1},
+            aura_strength: 2
         },
         {
             name: 'Adult',
             chr_index: 1,
             glyph_color: '#FF3D0D',
             length: 60,
-            harvest: {wood: 1, resource: 2, seeds: 1}
+            harvest: {wood: 1, resource: 2, seeds: 1},
+            aura_strength: 4
         }
     ];
 
@@ -70,12 +75,14 @@ Game.Tile.tree = function(species_name, initial_stage, initial_stage_age) {
             name: 'Rock Elm',
             seed_name: 'rock_elm_seeds',
             resource_name: 'stone',
+            aura_stat: 'def',
             chr: ['r', 'R']
         },
         'ironwood': {
             name: 'Ironwood',
             seed_name: 'ironwood_seeds',
             resource_name: 'iron',
+            aura_stat: 'str',
             chr: ['i', 'I']
         }
     };
@@ -142,6 +149,10 @@ Game.Tile.tree.prototype.getHarvest = function() {
     var output = {};
 
     for (var p in this.stage.harvest) {
+        if (!this.stage.harvest.hasOwnProperty(p)) {
+            continue;
+        }
+
         if (p == 'seeds') {
             output[this.species.seed_name] = this.stage.harvest.seeds;
         } else if (p == 'resource') {
@@ -152,4 +163,10 @@ Game.Tile.tree.prototype.getHarvest = function() {
     }
 
     return output;
+}
+
+Game.Tile.tree.prototype.getAura = function() {
+    var aura = {}
+    aura[this.species.aura_stat] = this.stage.aura_strength;
+    return aura;
 }
