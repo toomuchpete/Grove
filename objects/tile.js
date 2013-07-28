@@ -32,22 +32,36 @@ Game.Tile.tree = function(species_name, initial_stage, initial_stage_age) {
             name: 'Sapling',
             chr_index: 0,
             glyph_color: '#808080',
-            length: 120,
+            length: 20,
             harvest: {}
         },
         {
             name: 'Spawn',
             chr_index: 0,
             glyph_color: '#d0d0c0',
-            length: 120,
+            length: 20,
             harvest: {seeds: 2}
         },
         {
             name: 'Spark',
             chr_index: 1,
             glyph_color: '#FBEC5D',
-            length: 120,
+            length: 20,
             harvest: {wood: 1, seeds: 1}
+        },
+        {
+            name: 'Adolescent',
+            chr_index: 1,
+            glyph_color: '#9BBF10',
+            length: 20,
+            harvest: {wood: 2, resource: 1, seeds: 1}
+        },
+        {
+            name: 'Adult',
+            chr_index: 1,
+            glyph_color: '#FF3D0D',
+            length: 60,
+            harvest: {wood: 1, resource: 2, seeds: 1}
         }
     ];
 
@@ -55,11 +69,13 @@ Game.Tile.tree = function(species_name, initial_stage, initial_stage_age) {
         'rock_elm': {
             name: 'Rock Elm',
             seed_name: 'rock_elm_seeds',
+            resource_name: 'stone',
             chr: ['r', 'R']
         },
         'ironwood': {
             name: 'Ironwood',
             seed_name: 'ironwood_seeds',
+            resource_name: 'iron',
             chr: ['i', 'I']
         }
     };
@@ -128,6 +144,8 @@ Game.Tile.tree.prototype.getHarvest = function() {
     for (var p in this.stage.harvest) {
         if (p == 'seeds') {
             output[this.species.seed_name] = this.stage.harvest.seeds;
+        } else if (p == 'resource') {
+            output[this.species.resource_name] = this.stage.harvest.resource;
         } else {
             output[p] = this.stage.harvest[p];
         }
