@@ -179,6 +179,7 @@ Game.Screen.playScreen = {
             } else if (mode == 'plant') {
                 if (pos && Game.Inventory.removeItem(opts.target + "_seeds") !== false) {
                     if (!(this._map.getTile(pos[0], pos[1]) instanceof Game.Tile.land)) {
+                        Game.Inventory.addItem(opts.target + "_seeds"); // Replace the seed we took above
                         Game.Sounds.error.play();
                     } else {
                         this._map.setTile(pos[0], pos[1], new Game.Tile.tree(opts.target));
