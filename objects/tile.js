@@ -32,29 +32,34 @@ Game.Tile.tree = function(species_name, initial_stage, initial_stage_age) {
             name: 'Sapling',
             chr_index: 0,
             glyph_color: '#808080',
-            length: 120
+            length: 120,
+            harvest: {}
         },
         {
             name: 'Spawn',
             chr_index: 0,
             glyph_color: '#d0d0c0',
-            length: 120
+            length: 120,
+            harvest: {seeds: 2}
         },
         {
             name: 'Spark',
             chr_index: 1,
             glyph_color: '#FBEC5D',
-            length: 120
+            length: 120,
+            harvest: {wood: 1, seeds: 1}
         }
     ];
 
     this.species_list = {
         'rock_elm': {
             name: 'Rock Elm',
+            seed_name: 'rock_elm_seeds',
             chr: ['r', 'R']
         },
         'ironwood': {
             name: 'Ironwood',
+            seed_name: 'ironwood_seeds',
             chr: ['i', 'I']
         }
     };
@@ -115,4 +120,18 @@ Game.Tile.tree.prototype.tick = function() {
     if (this.stage.age > this.stage.length) {
         this.grow();
     }
+}
+
+Game.Tile.tree.prototype.getHarvest = function() {
+    var output = {};
+
+    for (var p in this.stage.harvest) {
+        if (p == 'seeds') {
+            output[this.species.seed_name] = this.stage.harvest.seeds;
+        } else {
+            output[p] = this.stage.harvest[p];
+        }
+    }
+
+    return output;
 }

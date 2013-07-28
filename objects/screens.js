@@ -169,6 +169,7 @@ Game.Screen.playScreen = {
                     if (this._map.getTile(pos[0], pos[1]) instanceof Game.Tile.land) {
                         Game.Sounds.error.play();
                     } else {
+                        Game.Inventory.mergeInventory(this._map.getTile(pos[0], pos[1]).getHarvest());
                         this._map.setTile(pos[0], pos[1], new Game.Tile.land(0));
                         Game.Sounds.harvest.play();
                     }

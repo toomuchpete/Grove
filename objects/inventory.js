@@ -17,6 +17,12 @@ Game.Inventory = (function(self){
         return inventory_list[name];
     }
 
+    self.mergeInventory = function(inv) {
+        for (var item in inv) {
+            this.addItem(item, inv[item]);
+        }
+    }
+
     self.removeItem = function(name, count) {
         if (count <= 0) { return false; }
 
