@@ -3,7 +3,12 @@ Game.UI = {
         if (this.elements.inspect) {
             var mode = Game.getCommandMode();
             if (mode == 'select') {
-                var tile = Game.getSelectedTile()
+                var tile = null;
+
+                if (Game.getScreen().getMap()) {
+                    tile = Game.getScreen().getMap().getSelectedTile();
+                }
+
                 if (tile) {
                      if (tile instanceof Game.Tile.land) {
                         this.elements.inspect.html("Just a fertile pile of dirt.");

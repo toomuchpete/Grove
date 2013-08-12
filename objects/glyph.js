@@ -10,7 +10,7 @@ Game.Glyph = function(chr, foreground, background, selected_background) {
 // Create standard getters for glyphs
 Game.Glyph.prototype.getChar = function() { 
     return this._char; 
-}
+};
 
 Game.Glyph.prototype.getBackground = function() {
     if (this._selected) {
@@ -18,12 +18,20 @@ Game.Glyph.prototype.getBackground = function() {
     } else {
         return this._background;    
     }
-}
+};
 
 Game.Glyph.prototype.getForeground = function() { 
     return this._foreground; 
-}
+};
 
 Game.Glyph.prototype.toggleSelected = function() {
     this._selected = !this._selected;
-}
+};
+
+Game.Glyph.prototype.selected = function(newVal) {
+    if (typeof newVal == "boolean") {
+        this._selected = newVal;
+    } else {
+        return this._selected;
+    }
+};

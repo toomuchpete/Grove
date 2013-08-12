@@ -32,10 +32,10 @@ Game.Map.prototype.getHeight = function() {
 Game.Map.prototype.getTile = function(x, y) {
     // Make sure we are inside the bounds. If we aren't, return
     // null tile.
-    if (x < 0 || x >= this._width || y < 0 || y >= this._height) {
-        return null;
-    } else {
+    if (x >= 0 && x < this._width && y >= 0 && y < this._height) {
         return this._tiles[x][y];
+    } else {
+        return null;
     }
 };
 
@@ -52,8 +52,64 @@ Game.Map.prototype.setTile = function(x, y, tile, addEntity) {
         if (tile.isEntity()) {
             this.addEntity(x,y,tile);    
         }
+
+        if (x == this._selectedX && y == this._selectedY) {
+            tile.getGlyph().selected(true);
+        }
     }
-}
+};
+
+Game.Map.prototype.selectTile = function(x,y) {
+    if (this.getSelectedTile()) {
+        this.getSelectedTile().getGlyph().selected(false);
+    }
+
+    if (x >= 0 && y >= 0) {
+        this._selectedX = x;
+        this._selectedY = y;
+
+        this.getSelectedTile().getGlyph().selected(true);
+    } else {
+        this._selectedX = undefined;
+        this._selectedY = undefined;
+    }
+};
+
+Game.Map.prototype.moveSelection = function(dx, dy) {
+    var width = this.getWidth();
+    var height = this.getHeight();
+
+    var newSelectedX = this._selectedX + dx;
+
+    if (newSelectedX >= width) {
+        newSelectedX = width-1;
+    } else if (newSelectedX < 0) {
+        newSelectedX = 0;
+    }
+
+    var newSelectedY = this._selectedY + dy;
+
+    if (newSelectedY >= height) {
+        newSelectedY = height-1;
+    } else if (newSelectedY < 0) {
+        newSelectedY = 0;
+    }
+
+    this.selectTile(newSelectedX, newSelectedY);
+};
+
+Game.Map.prototype.getSelectedTile = function() {
+    var pos = this.getSelectedPos();
+    if (pos) {
+        return this.getTile(pos[0], pos[1]);
+    }
+};
+
+Game.Map.prototype.getSelectedPos = function() {
+    if (this._selectedX >= 0 && this._selectedY >= 0) {
+        return [this._selectedX, this._selectedY];
+    }
+};
 
 Game.Map.prototype.removeEntity = function(entity) {
     var i = this._entities.indexOf(entity);
@@ -63,12 +119,12 @@ Game.Map.prototype.removeEntity = function(entity) {
     } else {
         return false;
     }
-}
+};
 
 Game.Map.prototype.addEntity = function(x,y,entity) {
     this._tiles[x][y] = entity;
     this._entities.push(entity);
-}
+};
 
 Game.Map.prototype.tick = function() {
     for (var i = 0; i < this._entities.length; i++) {

@@ -72,9 +72,10 @@
         <div class="page-header" style="margin-bottom: 25px;">
             <h1>Grove <small>a real-time strategy game</small></h1>
         </div>
-
+        <div id="gamebox" style="text-align: center;"></div>
         <div class="row" id="ui">
             <div class="span3"><div id="ui-actions" class="panel">
+<!--            // Mouse menus     
                 <div class="btn-group hide" id="action-buttons">
                     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Action <span class="caret"></span></a>
                     <ul class="dropdown-menu">
@@ -87,7 +88,14 @@
                         </li>
                         <li data-action="harvest" class="action"><a><i class="icon-truck"></i> Harvest</a></li>
                     </ul>
-                </div>                    
+                </div>
+-->
+                <strong>Keyboard Commands:</strong>
+                <ul class="unstyled">
+                    <li><tt>p</tt> -- Plant mode</li>
+                    <li><tt>h</tt> -- Harvest mode</li>
+                    <li><tt>i</tt> -- Inspect Mode</li>
+                </ul>
             </div></div>
             <div class="span6"><div id="ui-status"  class="panel">
                 <ul class="inline">
@@ -109,10 +117,9 @@
             </div></div>
             <div class="span3"><div id="ui-inspect" class="panel"></div></div>
         </div>
-        <div id="gamebox" style="text-align: center;"></div>
     </div>
     <footer class="container text-center">
-        An entry for the Ludum Dare <a href="http://www.ludumdare.com/compo/category/minild/7drts-minild-44/">MiniLD #44 / 7dRTS</a> by <a href="https://github.com/toomuchpete/Grove">Pete Holiday</a>.
+        A game by <a href="https://github.com/toomuchpete/Grove">Pete Holiday</a>.
     </footer>
 </body>
 </html>

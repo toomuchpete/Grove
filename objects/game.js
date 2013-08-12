@@ -32,7 +32,6 @@ var Game = {
         // bindEventToScreen('keyup');
         // bindEventToScreen('keypress');
 
-        this.setCommandMode('select');
         Game.Inventory.addItem('ironwood_seeds', 2);
         Game.Inventory.addItem('rock_elm_seeds', 2);
     },
@@ -76,8 +75,6 @@ var Game = {
     setCommandMode: function(mode, options) {
         $(this._display.getContainer()).removeClass('commandMode-'+this._commandMode);
 
-        Game.selectTile();
-
         this._commandMode = mode || 'select';
         this._commandOpts = options || {};
 
@@ -90,19 +87,4 @@ var Game = {
     getCommandOpts: function() {
         return this._commandOpts;
     },
-
-    selectTile: function(tile) {
-        if (Game._selectedTile) {
-            Game._selectedTile.getGlyph().toggleSelected();
-        }
-
-        Game._selectedTile = tile;
-
-        if (tile) {
-            tile.getGlyph().toggleSelected();
-        }
-    },
-    getSelectedTile: function() {
-        return this._selectedTile;
-    }
 }

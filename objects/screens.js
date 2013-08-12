@@ -36,13 +36,17 @@ Game.Screen.playScreen = {
     _displayPosY: 0,
 
     enter: function() {
-        $("#action-buttons").fadeIn()
-
         if (this._map == null) {
             this._map = Game.Map.generate(200, 80, 1, 7);
 
             this.startTimer();
         }
+
+        this._viewportHeight = Game.getDisplayHeight()-1;
+        this._viewportWidth = Game.getDisplayWidth();
+
+        Game.setCommandMode('select');
+        this.getMap().selectTile(0,0);
     },
     
     exit: function() {
@@ -52,8 +56,8 @@ Game.Screen.playScreen = {
     render: function(display) {
         display.clear();
 
-        var displayWidth = Game.getDisplayWidth();
-        var displayHeight = Game.getDisplayHeight()-1;
+        var displayWidth = this._viewportWidth;
+        var displayHeight = this._viewportHeight;
         var offsetX = this._displayPosX;
         var offsetY = this._displayPosY
 
@@ -122,75 +126,102 @@ Game.Screen.playScreen = {
         }
     },
     
+    ensureSelectionWithinViewport: function() {
+        var x = this.getMap()._selectedX;
+        var y = this.getMap()._selectedY;
+        var vx = this._displayPosX;
+        var vy = this._displayPosY;
+        var vh = this._viewportHeight;
+        var vw = this._viewportWidth;
+        var margin = 5;
+
+        if (x < vx+margin) {
+            this.move(x - (vx+margin), 0);
+        }
+
+        if (x >= vx+vw-5) {
+            this.move(x - (vx+(vw-1)-(margin)), 0);
+        }
+
+        if (y < vy) {
+            this.move(0, y - (vy+margin));
+        }
+
+        if (y >= vy+vh-5) {
+            this.move(0, y - (vy+(vh-1)-margin));
+        }
+    },
+
     handleInput: function(inputType, inputData) {
         if (inputType === 'keydown') {
-            // Movement
+            var pos = this.getMap().getSelectedPos();
+            var move_magnitude = 1;
+            if (inputData.shiftKey) {
+                move_magnitude += 10;
+            }
+
+            // Selection Movement
             if (inputData.keyCode === ROT.VK_LEFT) {
-                this.move(-1, 0);
+                this.getMap().moveSelection(-1 * move_magnitude, 0);
             } else if (inputData.keyCode === ROT.VK_RIGHT) {
-                this.move(1, 0);
+                this.getMap().moveSelection(move_magnitude, 0);
             } else if (inputData.keyCode === ROT.VK_UP) {
-                this.move(0, -1);
+                this.getMap().moveSelection(0, -1 * move_magnitude);
             } else if (inputData.keyCode === ROT.VK_DOWN) {
-                this.move(0, 1);
+                this.getMap().moveSelection(0, move_magnitude);
             } else if (inputData.keyCode === ROT.VK_ESCAPE) {
                 Game.setCommandMode('select');
             } else if (inputData.keyCode == ROT.VK_H) {
-                Game.setCommandMode('harvest');
-            } else if (inputData.keyCode == ROT.VK_P) {
-                Game.setCommandMode('plant');
-            } else if (Game.getCommandMode() == 'plant' && !Game.getCommandOpts().target) {
-                switch (inputData.keyCode) {
-                    case ROT.VK_I:
-                        Game.setCommandMode('plant', {target: 'ironwood'});
-                        break;
-                    case ROT.VK_R:
-                        Game.setCommandMode('plant', {target: 'rock_elm'});
-                        break;
-                    default:
-                        Game.setCommandMode('select');
-                        break;
-                }
-            }
-        } else if (inputType === 'click' || inputType === 'touchstart') {
-            var pos = this.eventToPosition(inputData);
-
-            var mode = Game.getCommandMode();
-            var opts = Game.getCommandOpts();
-
-            if (mode == 'select') {
                 if (pos) {
-                    Game.selectTile(this._map.getTile(pos[0], pos[1]));
-                } else {
-                    Game.selectTile();
-                }
-            } else if (mode == 'harvest') {
-                if (pos) {
-                    if (this._map.getTile(pos[0], pos[1]) instanceof Game.Tile.land) {
+                    if (this.getMap().getTile(pos[0], pos[1]) instanceof Game.Tile.land) {
                         Game.Sounds.error.play();
                     } else {
-                        Game.Inventory.mergeInventory(this._map.getTile(pos[0], pos[1]).getHarvest());
-                        this._map.setTile(pos[0], pos[1], new Game.Tile.land(0));
+                        Game.Inventory.mergeInventory(this.getMap().getTile(pos[0], pos[1]).getHarvest());
+                        this.getMap().setTile(pos[0], pos[1], new Game.Tile.land(0));
                         Game.Sounds.harvest.play();
                     }
                 } else {
                     Game.Sounds.error.play();
+                }                
+            } else if (inputData.keyCode == ROT.VK_P) {
+                Game.setCommandMode('plant');
+            } else if (Game.getCommandMode() == 'plant') {
+                var seed_type = undefined;
+
+                switch (inputData.keyCode) {
+                    case ROT.VK_I:
+                        seed_type = 'ironwood';
+                        break;
+                    case ROT.VK_R:
+                        seed_type = 'rock_elm';
+                        break;
+                    default:
+                        break;
                 }
-            } else if (mode == 'plant') {
-                if (pos && Game.Inventory.removeItem(opts.target + "_seeds") !== false) {
-                    if (!(this._map.getTile(pos[0], pos[1]) instanceof Game.Tile.land)) {
-                        Game.Inventory.addItem(opts.target + "_seeds"); // Replace the seed we took above
-                        Game.Sounds.error.play();
-                    } else {
-                        this._map.setTile(pos[0], pos[1], new Game.Tile.tree(opts.target));
+
+                if (seed_type && pos && this._map.getTile(pos[0], pos[1]) instanceof Game.Tile.land) {
+                    if (Game.Inventory.removeItem(seed_type + "_seeds") !== false) {
+                        this._map.setTile(pos[0], pos[1], new Game.Tile.tree(seed_type));
                         Game.Sounds.plant.play();
+                    } else {
+                        Game.Sounds.error.play();
                     }
-                } else {
-                    Game.Sounds.error.play();
                 }
+            }
+
+            this.ensureSelectionWithinViewport();
+        } else if (inputType === 'click') {
+            var pos = this.eventToPosition(inputData);
+
+            if (pos) {
+                this.getMap().selectTile(pos[0], pos[1]);
+            } else {
+                this.getMap().selectTile();
             }
 
             Game.UI.render();
         }
-    }
+    },
+
+    getMap: function() { return this._map; }
 }
