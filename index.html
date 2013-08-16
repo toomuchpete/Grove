@@ -6,14 +6,18 @@
 
     <!-- Styles -->
     <link href="bootstrap.slate.min.css" rel="stylesheet">
-    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <!-- FontAwesome: http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css -->
+    <link href="lib/font-awesome.css" rel="stylesheet">
     <link href="site.css" rel="stylesheet">
 
     <!-- Scripts -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <!-- jQuery: http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js -->
+    <script src="lib/jquery.min.js"></script>
+    <!-- Bootstrap: http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js -->
+    <script src="lib/bootstrap.min.js"></script>
     <script src="rot.min.js"></script> <!-- rev: b7c65505c102aead7f45e3d9790ede099c569ca2 -->
     <script src="buzz.js"></script>
+    <script src="Queue.compressed.js"></script>
 
     <script src="objects/game.js"></script>
     <script src="objects/screens.js"></script>
@@ -22,9 +26,11 @@
     <script src="objects/map.js"></script>
     <script src="objects/inventory.js"></script>
     <script src="objects/aura.js"></script>
+    <script src="objects/unit.js"></script>
     <script src="objects/ui.js"></script>
     <script src="objects/sound.js"></script>
 
+    <!-- Ubuntu Mono: http://fonts.googleapis.com/css?family=Ubuntu+Mono -->
     <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
 
     <script type="text/javascript">
@@ -40,21 +46,12 @@
                     }
                 }, false);
 
-                Game.init();
+                Game.setup();
                 Game.setDisplayWidth(Game.getDisplay().computeSize($("#gamebox").width(),0)[0]);
                 $('#gamebox').append(Game.getDisplay().getContainer());
                 Game.switchScreen(Game.Screen.introScreen);
 
                 Game.UI.elements = {inspect: $("#ui-inspect")};
-
-                $(".action").on('click', 'a', null, function(e) {
-                    var action = $(e.delegateTarget).data('action');
-                    var target = $(this).data('target');
-
-                    if (action == 'plant' || action == 'harvest') {
-                        Game.setCommandMode(action, {target: target});
-                    }
-                });
             }
         });
     </script>
@@ -75,26 +72,11 @@
         <div id="gamebox" style="text-align: center;"></div>
         <div class="row" id="ui">
             <div class="span3"><div id="ui-actions" class="panel">
-<!--            // Mouse menus     
-                <div class="btn-group hide" id="action-buttons">
-                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Action <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li class="dropdown-submenu">
-                            <a><i class="icon-leaf"></i> Plant</a>
-                            <ul class="dropdown-menu action" data-action="plant">
-                                <li><a data-target="ironwood">Ironwood (<span class="ironwood_seeds_count inventory_count">-</span>)</a></li>
-                                <li><a data-target="rock_elm">Rock Elm (<span class="rock_elm_seeds_count inventory_count">-</span>)</a></li>
-                            </ul>
-                        </li>
-                        <li data-action="harvest" class="action"><a><i class="icon-truck"></i> Harvest</a></li>
-                    </ul>
-                </div>
--->
                 <strong>Keyboard Commands:</strong>
                 <ul class="unstyled">
-                    <li><tt>p</tt> -- Plant mode</li>
-                    <li><tt>h</tt> -- Harvest mode</li>
-                    <li><tt>i</tt> -- Inspect Mode</li>
+                    <li><tt>p</tt> -- Plant</li>
+                    <li><tt>h</tt> -- Harvest</li>
+                    <li><tt>i</tt> -- Inspect</li>
                 </ul>
             </div></div>
             <div class="span6"><div id="ui-status"  class="panel">

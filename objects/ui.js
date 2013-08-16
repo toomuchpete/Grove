@@ -5,14 +5,12 @@ Game.UI = {
             if (mode == 'select') {
                 var tile = null;
 
-                if (Game.getScreen().getMap()) {
-                    tile = Game.getScreen().getMap().getSelectedTile();
-                }
+                tile = Game.Map.getSelectedTile();
 
                 if (tile) {
-                     if (tile instanceof Game.Tile.land) {
+                    if (tile instanceof Game.Tile.land) {
                         this.elements.inspect.html("Just a fertile pile of dirt.");
-                     } else if (tile instanceof Game.Tile.tree) {
+                    } else if (tile instanceof Game.Tile.tree) {
                         progress_pct = Math.floor(tile.stage.age/tile.stage.length*100);
                         var template = '<div><strong>Species:</strong> %s [<span style="color: %s; font-family: \'Ubuntu Mono\'">%s</span>]</div><div><strong>Growth Stage:</strong> %s</div>';
                         template += '<div class="progress progress-striped"><div class="bar bar-success" style="width: %s%; text-align: left; overflow: off;"></div></div>';
@@ -23,6 +21,8 @@ Game.UI = {
                             tile.stage.name,
                             progress_pct
                         ));
+                     } else {
+                        this.elements.inspect.html('&#175;\\_(&#12484;)_/&#175;');
                      }
                 } else {
                     this.elements.inspect.html("Click a tile to see its stats.");

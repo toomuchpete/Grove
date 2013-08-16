@@ -24,29 +24,27 @@ Game.Screen.introScreen = {
     },
 
     handleInput: function(inputType, inputData) {
-       Game.switchScreen(Game.Screen.playScreen);
+        Game.switchScreen(Game.Screen.playScreen);
     }
 }
 
 // Define our playing screen
 Game.Screen.playScreen = {
     _tickTime: 250,
-    _map: null,
     _displayPosX: 0,
     _displayPosY: 0,
 
     enter: function() {
-        if (this._map == null) {
-            this._map = Game.Map.generate(200, 80, 1, 7);
-
-            this.startTimer();
-        }
+        Game.Map.generate(200, 80, 1, 7);
+        this.startTimer();
 
         this._viewportHeight = Game.getDisplayHeight()-1;
         this._viewportWidth = Game.getDisplayWidth();
 
+        Game.Map.setTile(2,2,Game.Unit.create('worker'));
+
         Game.setCommandMode('select');
-        this.getMap().selectTile(0,0);
+        Game.Map.selectTile(0,0);
     },
     
     exit: function() {
@@ -64,7 +62,7 @@ Game.Screen.playScreen = {
        for (var x = 0; x < displayWidth; x++) {
             for (var y = 0; y < displayHeight; y++) {
                 // Fetch the glyph for the tile and render it to the screen
-                var glyph = this._map.getTile(x+offsetX, y+offsetY).getGlyph();
+                var glyph = Game.Map.getTile(x+offsetX, y+offsetY).getGlyph();
                 display.draw(x, y,
                     glyph.getChar(), 
                     glyph.getForeground(), 
@@ -75,21 +73,13 @@ Game.Screen.playScreen = {
         var statusText = '---';
 
         var cMode = Game.getCommandMode();
-        var cOpts = Game.getCommandOpts();
         
         switch (cMode) {
             case 'select':
-                statusText = 'Click a tile to see information about it.';
+                statusText = 'Select a tile to see information about it.';
                 break;
             case 'plant':
-                if (cOpts.target) {
-                    statusText = "Click to plant: " + cOpts.target + " (" + Game.Inventory.getItemCount(cOpts.target + "_seeds") + " remaining)";
-                } else {
-                    statusText = "Choose a type of tree to plant: Ironwood (i) or Rock Elm (r)";
-                }
-                break;
-            case 'harvest':
-                statusText = 'Click a tree to harvest it.';
+                statusText = "Choose a type of tree to plant: Ironwood (i) or Rock Elm (r)";
                 break;
             default:
                 statusText = "Command mode: " + cMode;
@@ -103,7 +93,7 @@ Game.Screen.playScreen = {
         // http://stackoverflow.com/questions/2749244/javascript-setinterval-and-this-solution
         this._timer = setInterval((function(self) {         //Self-executing func which takes 'this' as self
             return function() {                             //Return a function in the context of 'self'
-                self._map.tick();                           //Thing you wanted to run as non-window 'this'
+                Game.Map.tick();                           //Thing you wanted to run as non-window 'this'
                 self.render(Game.getDisplay());
                 Game.UI.render();
          }})(this), this._tickTime);
@@ -113,8 +103,8 @@ Game.Screen.playScreen = {
         var displayWidth = Game.getDisplayWidth();
         var displayHeight = Game.getDisplayHeight();
 
-        this._displayPosX = Math.max(0, Math.min(this._map.getWidth() - displayWidth, this._displayPosX + dX));
-        this._displayPosY = Math.max(0, Math.min(this._map.getHeight() - displayHeight, this._displayPosY + dY));
+        this._displayPosX = Math.max(0, Math.min(Game.Map.width - displayWidth, this._displayPosX + dX));
+        this._displayPosY = Math.max(0, Math.min(Game.Map.height - displayHeight, this._displayPosY + dY));
     },
 
     eventToPosition: function(e) {
@@ -127,8 +117,8 @@ Game.Screen.playScreen = {
     },
     
     ensureSelectionWithinViewport: function() {
-        var x = this.getMap()._selectedX;
-        var y = this.getMap()._selectedY;
+        var x = Game.Map.selection.x;
+        var y = Game.Map.selection.y;
         var vx = this._displayPosX;
         var vy = this._displayPosY;
         var vh = this._viewportHeight;
@@ -154,7 +144,7 @@ Game.Screen.playScreen = {
 
     handleInput: function(inputType, inputData) {
         if (inputType === 'keydown') {
-            var pos = this.getMap().getSelectedPos();
+            var pos = Game.Map.selection;
             var move_magnitude = 1;
             if (inputData.shiftKey) {
                 move_magnitude += 10;
@@ -162,22 +152,22 @@ Game.Screen.playScreen = {
 
             // Selection Movement
             if (inputData.keyCode === ROT.VK_LEFT) {
-                this.getMap().moveSelection(-1 * move_magnitude, 0);
+                Game.Map.moveSelection(-1 * move_magnitude, 0);
             } else if (inputData.keyCode === ROT.VK_RIGHT) {
-                this.getMap().moveSelection(move_magnitude, 0);
+                Game.Map.moveSelection(move_magnitude, 0);
             } else if (inputData.keyCode === ROT.VK_UP) {
-                this.getMap().moveSelection(0, -1 * move_magnitude);
+                Game.Map.moveSelection(0, -1 * move_magnitude);
             } else if (inputData.keyCode === ROT.VK_DOWN) {
-                this.getMap().moveSelection(0, move_magnitude);
+                Game.Map.moveSelection(0, move_magnitude);
             } else if (inputData.keyCode === ROT.VK_ESCAPE) {
                 Game.setCommandMode('select');
             } else if (inputData.keyCode == ROT.VK_H) {
                 if (pos) {
-                    if (this.getMap().getTile(pos[0], pos[1]) instanceof Game.Tile.land) {
+                    if (Game.Map.getTile(pos.x, pos.y) instanceof Game.Tile.land) {
                         Game.Sounds.error.play();
                     } else {
-                        Game.Inventory.mergeInventory(this.getMap().getTile(pos[0], pos[1]).getHarvest());
-                        this.getMap().setTile(pos[0], pos[1], new Game.Tile.land(0));
+                        Game.Inventory.mergeInventory(Game.Map.getTile(pos.x, pos.y).getHarvest());
+                        Game.Map.setTile(pos.x, pos.y, new Game.Tile.land(0));
                         Game.Sounds.harvest.play();
                     }
                 } else {
@@ -185,6 +175,23 @@ Game.Screen.playScreen = {
                 }                
             } else if (inputData.keyCode == ROT.VK_P) {
                 Game.setCommandMode('plant');
+            } else if (inputData.keyCode === ROT.VK_M) {
+                var entities = Game.Map.getEntities();
+                var pos = Game.Map.selection;
+                var pf = new ROT.Path.Dijkstra(pos.x, pos.y, function(x,y) {
+                    return Game.Map.isPassable(x,y);
+                }, {topology: 4});
+                
+                for (var i = 0; i < entities.length; i++) {
+                    var e = entities[i];
+                    pf.compute(e._pos[0], e._pos[1], function(x,y){
+                        var g = Game.Map.getTile(x,y).getGlyph();
+
+                        if (g._char === ' ') {
+                            g._char = '.';
+                        }
+                    });
+                }
             } else if (Game.getCommandMode() == 'plant') {
                 var seed_type = undefined;
 
@@ -199,9 +206,9 @@ Game.Screen.playScreen = {
                         break;
                 }
 
-                if (seed_type && pos && this._map.getTile(pos[0], pos[1]) instanceof Game.Tile.land) {
+                if (seed_type && pos && Game.Map.getTile(pos.x, pos.y) instanceof Game.Tile.land) {
                     if (Game.Inventory.removeItem(seed_type + "_seeds") !== false) {
-                        this._map.setTile(pos[0], pos[1], new Game.Tile.tree(seed_type));
+                        Game.Map.setTile(pos.x, pos.y, new Game.Tile.tree(seed_type));
                         Game.Sounds.plant.play();
                     } else {
                         Game.Sounds.error.play();
@@ -214,14 +221,12 @@ Game.Screen.playScreen = {
             var pos = this.eventToPosition(inputData);
 
             if (pos) {
-                this.getMap().selectTile(pos[0], pos[1]);
+                Game.Map.selectTile(pos[0], pos[1]);
             } else {
-                this.getMap().selectTile();
+                Game.Map.selectTile();
             }
 
             Game.UI.render();
         }
     },
-
-    getMap: function() { return this._map; }
 }

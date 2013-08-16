@@ -1,90 +1,78 @@
-var Game = {
-    _display: null,
-    _currentScreen: null,
-    _displayWidth: 100,
-    _displayHeight: 35,
-    _commandMode: null,
-    _commandOpts: {},
-    _selectedTile: null,
+var Game = (function(self){
+    var displayWidth = 100, displayHeight = 35, currentScreen, map, commandMode;
+    var display = new ROT.Display({width: displayWidth, height: displayHeight, fontFamily: 'Ubuntu Mono'});
 
-    init: function() {
-        this._display = new ROT.Display({width: this._displayWidth, height: this._displayHeight, fontFamily: 'Ubuntu Mono'});
+    var bindEventToScreen = function(event, element) {
+        (element || window).addEventListener(event, function(e) {
+            // When an event is received, send it to the
+            // screen if there is one
+            var scr  = Game.getScreen();
+            var disp = Game.getDisplay();
+            if (scr !== null) {
+                // Send the event type and data to the screen
+                scr.handleInput(event, e);
 
-        var game = this;
+                display.clear();
+                scr.render(display);
+            }
+        });
+    }
 
-        var bindEventToScreen = function(event, element) {
-            (element || window).addEventListener(event, function(e) {
-                // When an event is received, send it to the
-                // screen if there is one
-                if (game._currentScreen !== null) {
-                    // Send the event type and data to the screen
-                    game._currentScreen.handleInput(event, e);
+    bindEventToScreen('keydown');
+    bindEventToScreen('click', display.getContainer());
+    // bindEventToScreen('touchstart');
+    // bindEventToScreen('keyup');
+    // bindEventToScreen('keypress');
 
-                    game.getDisplay().clear();
-                    game._currentScreen.render(game.getDisplay());
-                }
-            });
-        }
 
-        bindEventToScreen('keydown');
-        bindEventToScreen('click', this._display.getContainer());
-        bindEventToScreen('touchstart');
-        // bindEventToScreen('keyup');
-        // bindEventToScreen('keypress');
-
+    self.setup = function() {
         Game.Inventory.addItem('ironwood_seeds', 2);
         Game.Inventory.addItem('rock_elm_seeds', 2);
-    },
+    }
 
-    getDisplay: function() {
-        return this._display
-    },
+    self.setDisplayWidth = function(w) {
+        displayWidth = w;
+        display.setOptions({width: w});
+    };
 
-    setDisplayWidth: function(w) {
-        this._displayWidth = w;
-        this._display.setOptions({width: w});
-    },
-    getDisplayWidth: function() {
-        return this._displayWidth;
-    },
+    self.getDisplayWidth = function() {
+        return displayWidth;
+    };
 
-    getDisplayHeight: function() {
-        return this._displayHeight;
-    },
+    self.getDisplayHeight = function() {
+        return displayHeight;
+    };
 
-    switchScreen: function(screen) {
-        // If we had a screen before, notify it that we exited
-        if (this._currentScreen !== null) {
-            this._currentScreen.exit();
+    self.getDisplay = function() {
+        return display;
+    };
+
+    self.switchScreen = function(screen) {
+        if (currentScreen !== undefined) {
+            currentScreen.exit();
         }
-        // Clear the display
-        this.getDisplay().clear();
-        // Update our current screen, notify it we entered
-        // and then render it
-        this._currentScreen = screen;
-        if (!this._currentScreen !== null) {
-            this._currentScreen.enter();
-            this._currentScreen.render(this._display);
+
+        display.clear();
+
+        currentScreen = screen;
+
+        if (currentScreen !== undefined) {
+            currentScreen.enter();
+            currentScreen.render(display);
         }
-    },
+    };
 
-    getScreen: function() {
-        return this._currentScreen;
-    },
+    self.getScreen = function() {
+        return currentScreen;
+    };
 
-    setCommandMode: function(mode, options) {
-        $(this._display.getContainer()).removeClass('commandMode-'+this._commandMode);
+    self.setCommandMode = function(mode) {
+        commandMode = mode;
+    };
 
-        this._commandMode = mode || 'select';
-        this._commandOpts = options || {};
+    self.getCommandMode = function() {
+        return commandMode;
+    }
 
-        $(this._display.getContainer()).addClass('commandMode-'+this._commandMode);
-    },
-    getCommandMode: function() {
-        return this._commandMode;
-    },
-
-    getCommandOpts: function() {
-        return this._commandOpts;
-    },
-}
+    return self;
+}({}));
