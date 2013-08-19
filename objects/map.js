@@ -142,9 +142,9 @@ Game.Map = (function(self){
             if (!entities.hasOwnProperty(e)) {
                 continue;
             }
-        }
 
-        entities[e].tick();
+            entities[e].tick();
+        }
 
         Game.Aura.calculateAuras();
     }

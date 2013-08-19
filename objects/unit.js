@@ -6,7 +6,7 @@ Game.Unit = (function(self){
     self.tick = function() {
         if (self.currentTask === undefined) {
             self.currentTask = Game.TaskManager.getTask();
-            if (self.currentTask) {
+            if (self.currentTask !== undefined) {
                 console.log("Now performing new task...", self.currentTask);
             } else {
                 return;
