@@ -6,7 +6,6 @@ Game.TaskManager = (function(self){
     };
 
     self.addTask = function(task) {
-        console.log("New task in queue:", task);
         return q.push(task);
     };
 

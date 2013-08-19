@@ -1,47 +1,78 @@
 Game.Unit = (function(self){
+    self.tasks = [];
+    self.wait = 0;
+
     self.isEntity = function() {
         return true;
     };
 
     self.tick = function() {
-        if (self.currentTask === undefined) {
-            self.currentTask = Game.TaskManager.getTask();
-            if (self.currentTask !== undefined) {
-                console.log("Now performing new task...", self.currentTask);
-            } else {
+        if (self.wait > 0) {
+            self.wait -= 1; 
+            return;
+        }
+
+        if (self.tasks[0] === undefined) {
+            self.tasks[0] = Game.TaskManager.getTask();
+            if (self.tasks[0] === undefined) {
                 return;
             }
         }
 
-        var task = self.currentTask;
+        var task = self.tasks[0];
 
-        if (task.type === 'harvest') {
-            self.harvestTick();
+        switch (task.type) {
+            case 'harvest':
+                self.harvestTick();
+                break;
+            case 'moveNextTo':
+                self.moveNextToTick();
+                break;
+        };
+    };
+
+    self.moveNextToTick = function() {
+        // Can we reach the spot?
+        var task = self.tasks[0];
+        var myPos = self.getPos();
+        var taskPos = task.pos;
+
+        if (Game.Map.squareDistance(myPos.x, myPos.y, taskPos.x, taskPos.y) <= 1) {
+            self.route = undefined;
+            self.tasks.shift();
+        } else if (self.route === undefined) {
+            self.route = Game.Map.getRoute(self, task.pos.x, task.pos.y);
+        } else {
+            var nextStep = self.route.shift();
+            Game.Map.moveEntityTo(Game.Map.getEntity(myPos.x, myPos.y), nextStep.x, nextStep.y);
+            // self.wait = 1;
         }
     };
 
     self.harvestTick = function() {
-        var task = self.currentTask;
-
-        if (task.type !== 'harvest' || self.getPos() === undefined) {
-            console.log("Waiting...", task.type, self.getPos());
-            return false;
-        }
+        var task = self.tasks[0];
 
         // Can we reach the spot?
         var myPos = self.getPos();
         var taskPos = task.pos;
 
-        if (Math.abs(myPos.x - taskPos.x) + Math.abs(myPos.y - taskPos.y) <= 1) {
-            self.route = undefined;
-            self.currentTask = undefined;
-            console.log("We have arrived!");
-        } else if (self.route === undefined) {
-            console.log("\tAcquiring route...");
-            self.route = Game.MotionManager.getRoute(self, task.pos.x, task.pos.y);
-            console.log("\tRoute acquired. " + self.route.length + " steps.");
-            console.log(self.route);
-        }
+        if (Game.Map.squareDistance(myPos.x, myPos.y, taskPos.x, taskPos.y) <= 1) {
+            if (task.ticksRemaining === undefined) {
+                task.ticksRemaining = 5;
+            } else if (task.ticksRemaining > 0) {
+                task.ticksRemaining -= 1;
+            } else {
+                var harvestedEntity = Game.Map.getEntity(taskPos.x, taskPos.y);
+                Game.Inventory.mergeInventory(harvestedEntity.getHarvest());
+                Game.Map.removeEntity(harvestedEntity);
+                Game.Sounds.harvest.play();
+
+                self.tasks.shift();
+            }
+        } else {
+            // We're not close enough, need to walk there first.
+            self.tasks.unshift({type: 'moveNextTo', pos: taskPos});
+        }        
     };
 
     self.getGlyph = function() {

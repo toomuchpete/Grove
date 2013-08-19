@@ -5,11 +5,11 @@ Game.Tile = function(glyph) {
 };
 
 Game.Tile.prototype.setPos = function(x, y) {
-    self.pos = {x: x, y: y};
+    this.pos = {x: x, y: y};
 };
 
 Game.Tile.prototype.getPos = function() {
-    return self.pos;
+    return this.pos;
 };
 
 Game.Tile.prototype.getGlyph = function() {
@@ -46,7 +46,7 @@ Game.Tile.tree = function(species_name, initial_stage, initial_stage_age) {
             name: 'Sapling',
             chr_index: 0,
             glyph_color: '#808080',
-            length: 20,
+            length: 120,
             harvest: {},
             aura_strength: 0
         },
@@ -54,7 +54,7 @@ Game.Tile.tree = function(species_name, initial_stage, initial_stage_age) {
             name: 'Spawn',
             chr_index: 0,
             glyph_color: '#d0d0c0',
-            length: 20,
+            length: 120,
             harvest: {seeds: 2},
             aura_strength: 0
         },
@@ -62,7 +62,7 @@ Game.Tile.tree = function(species_name, initial_stage, initial_stage_age) {
             name: 'Spark',
             chr_index: 1,
             glyph_color: '#FBEC5D',
-            length: 20,
+            length: 120,
             harvest: {wood: 1, seeds: 1},
             aura_strength: 1
         },
@@ -70,7 +70,7 @@ Game.Tile.tree = function(species_name, initial_stage, initial_stage_age) {
             name: 'Adolescent',
             chr_index: 1,
             glyph_color: '#9BBF10',
-            length: 20,
+            length: 120,
             harvest: {wood: 2, resource: 1, seeds: 1},
             aura_strength: 2
         },
@@ -78,7 +78,7 @@ Game.Tile.tree = function(species_name, initial_stage, initial_stage_age) {
             name: 'Adult',
             chr_index: 1,
             glyph_color: '#FF3D0D',
-            length: 60,
+            length: 120,
             harvest: {wood: 1, resource: 2, seeds: 1},
             aura_strength: 4
         }

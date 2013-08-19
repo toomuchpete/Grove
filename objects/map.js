@@ -31,6 +31,8 @@ Game.Map = (function(self){
         if (self.getTile(x,y).getGlyph().selected()) {
             self.getTile(x,y).getGlyph().selected(false);
             entity.getGlyph().selected(true);
+        } else {
+            entity.getGlyph().selected(false);
         }
 
         entity.setPos(x,y);
@@ -39,7 +41,7 @@ Game.Map = (function(self){
 
     self.setTile = function(x, y, tile) {
         if (x < 0 || x >= self.width || y < 0 || y >= self.height) {
-            console.log("Illegal tile coordinates");
+            console.log("ERROR: Illegal tile coordinates");
         } else {            
             tile.setPos(x,y);
             self.tiles[x][y] = tile;
@@ -124,12 +126,14 @@ Game.Map = (function(self){
     };
 
     self.removeEntity = function(entity) {
-        var i = entities.indexOf(entity);
+        var entityPos = entity.getPos();
+        var entityIdx = entityIndex(entityPos.x, entityPos.y);
 
-        if (i >= 0) {
-            entities.splice(i, 1);
-        } else {
-            return false;
+        delete entities[entityIdx];
+        entity.setPos();
+
+        if (entity.getGlyph().selected()) {
+            self.select(entityPos.x, entityPos.y);
         }
     };
 
@@ -147,6 +151,61 @@ Game.Map = (function(self){
         }
 
         Game.Aura.calculateAuras();
+    }
+
+    // Motion Manager:
+    self.getRoute = function(fromEntity, targetX, targetY) {
+        if (fromEntity === undefined || fromEntity.getPos() === undefined || fromEntity.getPos().x === undefined || fromEntity.getPos().y === undefined) {
+            return undefined;
+        };
+
+        var path = [];
+
+        var pf = new ROT.Path.Dijkstra(targetX, targetY, function(x,y) {
+            if (x === fromEntity.pos.x && y === fromEntity.pos.y) {
+                return true;
+            }
+
+            return Game.Map.isPassable(x,y);
+        }, {topology: 4});
+
+        var entityPos = fromEntity.getPos();
+
+        pf.compute(entityPos.x, entityPos.y, function(x,y){
+            if (x === entityPos.x && y === entityPos.y) {
+                return;
+            }
+
+            path.push({x: x, y: y});
+        });
+
+        return path;
+    };
+
+    self.moveEntityTo = function(entity, targetX, targetY) {
+        var newIndex = entityIndex(targetX,targetY);
+        var e = entity;
+        var entityPos = e.getPos();
+        var oldIndex = entityIndex(entityPos.x,entityPos.y);
+
+        if (self.squareDistance(entityPos.x, entityPos.y, targetX, targetY) > 1) {
+            console.log("ERROR: too big of a step!");
+            return false;
+        }
+
+        if (entities[newIndex] !== undefined) {
+            console.log("ERROR: two entities cannot occupy the same tile.");
+            return false;
+        }
+        // entities[newIndex] = e;
+        // e.setPos(targetX,targetY);
+        // delete entities[oldIndex];
+        self.removeEntity(e);
+        self.addEntity(targetX,targetY,e);
+    };
+
+    self.squareDistance = function(x1,y1,x2,y2) {
+        return (Math.abs(x1 - x2) + Math.abs(y1 - y2));
     }
 
     return self;

@@ -167,9 +167,6 @@ Game.Screen.playScreen = {
                         Game.Sounds.error.play();
                     } else {
                         Game.TaskManager.addTask({type: 'harvest', pos: pos});
-                        // Game.Inventory.mergeInventory(Game.Map.getTile(pos.x, pos.y).getHarvest());
-                        // Game.Map.setTile(pos.x, pos.y, new Game.Tile.land(0));
-                        // Game.Sounds.harvest.play();
                     }
                 } else {
                     Game.Sounds.error.play();
@@ -183,9 +180,7 @@ Game.Screen.playScreen = {
                 for (var i = 0; i < entities.length; i++) {
                     var e = entities[i];
 
-                    var path = Game.MotionManager.getRoute(e, pos.x, pos.y);
-
-                    console.log(path);
+                    var path = Game.Map.getRoute(e, pos.x, pos.y);
                 }
             } else if (Game.getCommandMode() == 'plant') {
                 var seed_type = undefined;
