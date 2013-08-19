@@ -31,6 +31,9 @@ Game.Unit = (function(self){
             case 'moveNextTo':
                 this.moveNextToTick();
                 break;
+            case 'plant':
+                this.plantTick();
+                break;
         };
     };
 
@@ -75,8 +78,37 @@ Game.Unit = (function(self){
         } else {
             // We're not close enough, need to walk there first.
             this.tasks.unshift({type: 'moveNextTo', pos: taskPos});
-        }        
+        }
     };
+
+    self.plantTick = function() {
+        var task = this.tasks[0];
+
+        // Can we reach the spot?
+        var myPos = this.getPos();
+        var taskPos = task.pos;
+        var seedType = task.plant;
+
+        if (Game.Map.squareDistance(myPos.x, myPos.y, taskPos.x, taskPos.y) <= 1) {
+            if (task.ticksRemaining === undefined) {
+                task.ticksRemaining = 2;
+            } else if (task.ticksRemaining > 0) {
+                task.ticksRemaining -= 1;
+            } else {
+                if (Game.Inventory.removeItem(seedType + "_seeds") !== false) {
+                    Game.Map.addEntity(taskPos.x, taskPos.y, new Game.Tile.tree(seedType));
+                    Game.Sounds.plant.play();
+                } else {
+                    Game.Sounds.error.play();
+                }
+
+                this.tasks.shift();
+            }
+        } else {
+            // We're not close enough, need to walk there first.
+            this.tasks.unshift({type: 'moveNextTo', pos: taskPos});
+        }
+    }
 
     self.getGlyph = function() {
         return this.glyph;

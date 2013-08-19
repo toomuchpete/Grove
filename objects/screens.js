@@ -198,9 +198,8 @@ Game.Screen.playScreen = {
                 }
 
                 if (seed_type && pos && Game.Map.getEntity(pos.x, pos.y) === undefined) {
-                    if (Game.Inventory.removeItem(seed_type + "_seeds") !== false) {
-                        Game.Map.addEntity(pos.x, pos.y, new Game.Tile.tree(seed_type));
-                        Game.Sounds.plant.play();
+                    if (Game.Inventory.getItemCount(seed_type + "_seeds") > 0) {
+                        Game.TaskManager.addTask({type: 'plant', plant: seed_type, pos: pos});
                     } else {
                         Game.Sounds.error.play();
                     }

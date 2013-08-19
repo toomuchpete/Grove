@@ -1,3 +1,10 @@
+/**
+    to do:
+        - plant designations
+        - recalculate paths when you can't make a step
+        - return task if you can't find a path
+**/
+
 Game.Map = (function(self){
     var entities = {};
     var tiles = [];
