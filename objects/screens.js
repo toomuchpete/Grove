@@ -42,6 +42,7 @@ Game.Screen.playScreen = {
         this._viewportWidth = Game.getDisplayWidth();
 
         Game.Map.addEntity(4,4,Game.Unit.create('worker'));
+        Game.Map.addEntity(2,2,Game.Unit.create('worker'));
 
         Game.setCommandMode('select');
         Game.Map.select(0,0);

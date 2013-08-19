@@ -1,59 +1,62 @@
 Game.Unit = (function(self){
-    self.tasks = [];
-    self.wait = 0;
-
     self.isEntity = function() {
         return true;
     };
 
     self.tick = function() {
-        if (self.wait > 0) {
-            self.wait -= 1; 
+        if (this.tasks === undefined) {
+            this.tasks = [];
+        }
+
+        if (this.wait > 0) {
+            this.wait -= 1; 
             return;
         }
 
-        if (self.tasks[0] === undefined) {
-            self.tasks[0] = Game.TaskManager.getTask();
-            if (self.tasks[0] === undefined) {
+        if (this.tasks.length === 0) {
+            var newTask = Game.TaskManager.getTask();
+            if (newTask !== undefined) {
+                this.tasks.unshift(newTask);
+            } else {
                 return;
             }
         }
 
-        var task = self.tasks[0];
+        var task = this.tasks[0];
 
         switch (task.type) {
             case 'harvest':
-                self.harvestTick();
+                this.harvestTick();
                 break;
             case 'moveNextTo':
-                self.moveNextToTick();
+                this.moveNextToTick();
                 break;
         };
     };
 
     self.moveNextToTick = function() {
         // Can we reach the spot?
-        var task = self.tasks[0];
-        var myPos = self.getPos();
+        var task = this.tasks[0];
+        var myPos = this.getPos();
         var taskPos = task.pos;
 
         if (Game.Map.squareDistance(myPos.x, myPos.y, taskPos.x, taskPos.y) <= 1) {
-            self.route = undefined;
-            self.tasks.shift();
-        } else if (self.route === undefined) {
-            self.route = Game.Map.getRoute(self, task.pos.x, task.pos.y);
+            delete this.route;
+            this.tasks.shift();
+        } else if (this.route === undefined) {
+            this.route = Game.Map.getRoute(this, task.pos.x, task.pos.y);
         } else {
-            var nextStep = self.route.shift();
+            var nextStep = this.route.shift();
             Game.Map.moveEntityTo(Game.Map.getEntity(myPos.x, myPos.y), nextStep.x, nextStep.y);
             // self.wait = 1;
         }
     };
 
     self.harvestTick = function() {
-        var task = self.tasks[0];
+        var task = this.tasks[0];
 
         // Can we reach the spot?
-        var myPos = self.getPos();
+        var myPos = this.getPos();
         var taskPos = task.pos;
 
         if (Game.Map.squareDistance(myPos.x, myPos.y, taskPos.x, taskPos.y) <= 1) {
@@ -67,11 +70,11 @@ Game.Unit = (function(self){
                 Game.Map.removeEntity(harvestedEntity);
                 Game.Sounds.harvest.play();
 
-                self.tasks.shift();
+                this.tasks.shift();
             }
         } else {
             // We're not close enough, need to walk there first.
-            self.tasks.unshift({type: 'moveNextTo', pos: taskPos});
+            this.tasks.unshift({type: 'moveNextTo', pos: taskPos});
         }        
     };
 
@@ -88,11 +91,11 @@ Game.Unit = (function(self){
     };
 
     self.setPos = function(x, y) {
-        self.pos = {x: x, y: y};
+        this.pos = {x: x, y: y};
     };
 
     self.getPos = function() {
-        return self.pos;
+        return this.pos;
     };
 
     self.create = function(type) {
