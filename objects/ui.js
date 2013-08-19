@@ -5,7 +5,7 @@ Game.UI = {
             if (mode == 'select') {
                 var tile = null;
 
-                tile = Game.Map.getSelectedTile();
+                tile = Game.Map.getSelected();
 
                 if (tile) {
                     if (tile instanceof Game.Tile.land) {

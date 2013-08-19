@@ -4,6 +4,14 @@ Game.Tile = function(glyph) {
     this._passable = true;
 };
 
+Game.Tile.prototype.setPos = function(x, y) {
+    self.pos = {x: x, y: y};
+};
+
+Game.Tile.prototype.getPos = function() {
+    return self.pos;
+};
+
 Game.Tile.prototype.getGlyph = function() {
     return this._glyph;
 };

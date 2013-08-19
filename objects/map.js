@@ -1,30 +1,48 @@
 Game.Map = (function(self){
-    var entities = [];
-    self.tiles = [];
+    var entities = {};
+    var tiles = [];
+
+    var entityIndex = function(x,y) { return x + "," + y; };
+
+    // "Tiles" refer to map squares. "Entities" refer to game objects that sit on tiles.
 
     self.getTile = function(x,y) {
-        if (self.tiles[x] === undefined) {
+        if (tiles[x] === undefined) {
             return undefined;
         }
 
-        return self.tiles[x][y];
+        return tiles[x][y];
+    };
+
+    self.getEntity = function(x,y) {
+        return entities[entityIndex(x,y)];
+    };
+
+    self.getObjectAt = function(x,y) {
+        return self.getEntity(x,y) || self.getTile(x,y);
+    }
+
+    self.addEntity = function(x, y, entity) {
+        if (self.getEntity(x,y) !== undefined) {
+            console.log("ERROR: Two entities may not occupy the same tile.");
+            return false;
+        }
+
+        if (self.getTile(x,y).getGlyph().selected()) {
+            self.getTile(x,y).getGlyph().selected(false);
+            entity.getGlyph().selected(true);
+        }
+
+        entity.setPos(x,y);
+        entities[entityIndex(x,y)] = entity;
     };
 
     self.setTile = function(x, y, tile) {
         if (x < 0 || x >= self.width || y < 0 || y >= self.height) {
             console.log("Illegal tile coordinates");
-        } else {
-            if (self.tiles[x][y].isEntity()) {
-                self.tiles[x][y]._pos = undefined;
-                self.removeEntity(self.tiles[x][y]);    
-            }
-            
-            tile._pos = [x,y];
+        } else {            
+            tile.setPos(x,y);
             self.tiles[x][y] = tile;
-
-            if (tile.isEntity()) {
-                entities.push(tile);
-            }
 
             if (this.selection !== undefined && x === this.selection.x && y === this.selection.y) {
                 tile.getGlyph().selected(true);
@@ -33,38 +51,38 @@ Game.Map = (function(self){
     };
 
     self.isPassable = function(x,y) {
-        var t = self.getTile(x,y);
+        var t = self.getObjectAt(x,y);
 
         if (t === undefined) {
             return false;
         }
 
-        return self.getTile(x,y).isPassable();
+        return self.getObjectAt(x,y).isPassable();
     };
 
     self.generate = function(width, height) {
-        self.tiles = [];
+        tiles = [];
 
         for (var x = 0; x < width; x++) {
-            self.tiles.push([]);
+            tiles.push([]);
             for (var y = 0; y < height; y++) {
-                self.tiles[x].push(new Game.Tile.land(0));
+                tiles[x].push(new Game.Tile.land(0));
             }
         }
 
-        self.height = self.tiles[0].length;
-        self.width  = self.tiles.length;
+        self.height = tiles[0].length;
+        self.width  = tiles.length;
     };
 
-    self.selectTile = function(x, y) {
-        if (this.getSelectedTile() !== undefined) {
-            this.getSelectedTile().getGlyph().selected(false);
+    self.select = function(x, y) {
+        if (this.getSelected() !== undefined) {
+            this.getSelected().getGlyph().selected(false);
         }
 
         if (x >= 0 && y >= 0) {
             self.selection = {x: x, y: y};
 
-            this.getSelectedTile().getGlyph().selected(true);
+            this.getSelected().getGlyph().selected(true);
         } else {
             this.selection = undefined;
         }
@@ -94,15 +112,15 @@ Game.Map = (function(self){
             newSelectedY = 0;
         }
 
-        this.selectTile(newSelectedX, newSelectedY);
+        this.select(newSelectedX, newSelectedY);
     };
 
-    self.getSelectedTile = function() {
+    self.getSelected = function() {
         if (self.selection === undefined) {
             return undefined;
         }
 
-        return self.tiles[self.selection.x][self.selection.y];
+        return self.getObjectAt(self.selection.x, self.selection.y);
     };
 
     self.removeEntity = function(entity) {
@@ -120,9 +138,13 @@ Game.Map = (function(self){
     };
 
     self.tick = function() {
-        for (var i = 0; i < entities.length; i++) {
-            entities[i].tick();
+        for (var e in entities) {
+            if (!entities.hasOwnProperty(e)) {
+                continue;
+            }
         }
+
+        entities[e].tick();
 
         Game.Aura.calculateAuras();
     }

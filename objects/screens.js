@@ -41,10 +41,10 @@ Game.Screen.playScreen = {
         this._viewportHeight = Game.getDisplayHeight()-1;
         this._viewportWidth = Game.getDisplayWidth();
 
-        Game.Map.setTile(2,2,Game.Unit.create('worker'));
+        Game.Map.addEntity(4,4,Game.Unit.create('worker'));
 
         Game.setCommandMode('select');
-        Game.Map.selectTile(0,0);
+        Game.Map.select(0,0);
     },
     
     exit: function() {
@@ -62,7 +62,7 @@ Game.Screen.playScreen = {
        for (var x = 0; x < displayWidth; x++) {
             for (var y = 0; y < displayHeight; y++) {
                 // Fetch the glyph for the tile and render it to the screen
-                var glyph = Game.Map.getTile(x+offsetX, y+offsetY).getGlyph();
+                var glyph = Game.Map.getObjectAt(x+offsetX, y+offsetY).getGlyph();
                 display.draw(x, y,
                     glyph.getChar(), 
                     glyph.getForeground(), 
@@ -163,34 +163,29 @@ Game.Screen.playScreen = {
                 Game.setCommandMode('select');
             } else if (inputData.keyCode == ROT.VK_H) {
                 if (pos) {
-                    if (Game.Map.getTile(pos.x, pos.y) instanceof Game.Tile.land) {
+                    if (Game.Map.getObjectAt(pos.x, pos.y) instanceof Game.Tile.land) {
                         Game.Sounds.error.play();
                     } else {
-                        Game.Inventory.mergeInventory(Game.Map.getTile(pos.x, pos.y).getHarvest());
-                        Game.Map.setTile(pos.x, pos.y, new Game.Tile.land(0));
-                        Game.Sounds.harvest.play();
+                        Game.TaskManager.addTask({type: 'harvest', pos: pos});
+                        // Game.Inventory.mergeInventory(Game.Map.getTile(pos.x, pos.y).getHarvest());
+                        // Game.Map.setTile(pos.x, pos.y, new Game.Tile.land(0));
+                        // Game.Sounds.harvest.play();
                     }
                 } else {
                     Game.Sounds.error.play();
-                }                
+                }
             } else if (inputData.keyCode == ROT.VK_P) {
                 Game.setCommandMode('plant');
             } else if (inputData.keyCode === ROT.VK_M) {
                 var entities = Game.Map.getEntities();
                 var pos = Game.Map.selection;
-                var pf = new ROT.Path.Dijkstra(pos.x, pos.y, function(x,y) {
-                    return Game.Map.isPassable(x,y);
-                }, {topology: 4});
-                
+
                 for (var i = 0; i < entities.length; i++) {
                     var e = entities[i];
-                    pf.compute(e._pos[0], e._pos[1], function(x,y){
-                        var g = Game.Map.getTile(x,y).getGlyph();
 
-                        if (g._char === ' ') {
-                            g._char = '.';
-                        }
-                    });
+                    var path = Game.MotionManager.getRoute(e, pos.x, pos.y);
+
+                    console.log(path);
                 }
             } else if (Game.getCommandMode() == 'plant') {
                 var seed_type = undefined;
@@ -206,9 +201,9 @@ Game.Screen.playScreen = {
                         break;
                 }
 
-                if (seed_type && pos && Game.Map.getTile(pos.x, pos.y) instanceof Game.Tile.land) {
+                if (seed_type && pos && Game.Map.getEntity(pos.x, pos.y) === undefined) {
                     if (Game.Inventory.removeItem(seed_type + "_seeds") !== false) {
-                        Game.Map.setTile(pos.x, pos.y, new Game.Tile.tree(seed_type));
+                        Game.Map.addEntity(pos.x, pos.y, new Game.Tile.tree(seed_type));
                         Game.Sounds.plant.play();
                     } else {
                         Game.Sounds.error.play();
@@ -221,9 +216,9 @@ Game.Screen.playScreen = {
             var pos = this.eventToPosition(inputData);
 
             if (pos) {
-                Game.Map.selectTile(pos[0], pos[1]);
+                Game.Map.select(pos[0], pos[1]);
             } else {
-                Game.Map.selectTile();
+                Game.Map.select();
             }
 
             Game.UI.render();
