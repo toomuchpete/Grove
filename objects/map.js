@@ -50,7 +50,7 @@ Game.Map = (function(self){
         var t = self.getEntity(x,y);
 
         if (t === undefined) {
-            return false;
+            return true;
         }
 
         return t.isPassable();
@@ -108,10 +108,6 @@ Game.Map = (function(self){
 
         delete entities[entityIdx];
         entity.setPos();
-
-        if (entity.getGlyph().selected()) {
-            self.select(entityPos.x, entityPos.y);
-        }
     };
 
     self.getEntities = function() {

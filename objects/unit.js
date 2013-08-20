@@ -48,10 +48,13 @@ Game.Unit = (function(self){
             this.tasks.shift();
         } else if (this.route === undefined) {
             this.route = Game.Map.getRoute(this, task.pos.x, task.pos.y);
+            if (this.route.length === 0) {
+                console.log("ERROR: No route available, all tasks cancelled");
+                this.tasks = [];
+            }
         } else {
             var nextStep = this.route.shift();
             Game.Map.moveEntityTo(Game.Map.getEntity(myPos.x, myPos.y), nextStep.x, nextStep.y);
-            // self.wait = 1;
         }
     };
 
