@@ -3,7 +3,7 @@ var Game = (function(self){
     var display = new ROT.Display({width: displayWidth, height: displayHeight, fontFamily: 'Ubuntu Mono'});
 
     var bindEventToScreen = function(event, element) {
-        (element || window).addEventListener(event, function(e) {
+        $(element || window).on(event, function(e) {
             // When an event is received, send it to the
             // screen if there is one
             var scr  = Game.getScreen();
@@ -12,8 +12,8 @@ var Game = (function(self){
                 // Send the event type and data to the screen
                 scr.handleInput(event, e);
 
-                display.clear();
-                scr.render(display);
+                disp.clear();
+                scr.render(disp);
             }
         });
     }

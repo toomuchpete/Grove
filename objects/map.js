@@ -6,28 +6,35 @@
 **/
 
 Game.Map = (function(self){
+    var noiseGenerator = new ROT.Noise.Simplex();
     var entities = {};
-    var tiles = [];
+
+    self.height = 100;
+    self.width = 100;
 
     var entityIndex = function(x,y) { return x + "," + y; };
 
     // "Tiles" refer to map squares. "Entities" refer to game objects that sit on tiles.
 
     self.getTile = function(x,y) {
-        if (tiles[x] === undefined) {
-            return undefined;
+        var bgColors = {r: [72,80], g: [85,100], b: [35,50]};
+
+        var noise = noiseGenerator.get(x/40,y/40);
+        var r = Math.floor(bgColors.r[0] + Math.abs(noise)*(bgColors.r[1]-bgColors.r[0]));
+        var g = Math.floor(bgColors.g[0] + Math.abs(noise)*(bgColors.g[1]-bgColors.g[0])); 
+        var b = Math.floor(bgColors.b[0] + Math.abs(noise)*(bgColors.b[1]-bgColors.b[0]));
+        var color = "rgb(" + r + "," + g + "," + b + ")";
+    
+        if (self.selection && self.selection.x === x && self.selection.y === y) {
+            color = '#004000';
         }
 
-        return tiles[x][y];
+        return new Game.Tile.land(0, color);
     };
 
     self.getEntity = function(x,y) {
         return entities[entityIndex(x,y)];
     };
-
-    self.getObjectAt = function(x,y) {
-        return self.getEntity(x,y) || self.getTile(x,y);
-    }
 
     self.addEntity = function(x, y, entity) {
         if (self.getEntity(x,y) !== undefined) {
@@ -35,63 +42,23 @@ Game.Map = (function(self){
             return false;
         }
 
-        if (self.getTile(x,y).getGlyph().selected()) {
-            self.getTile(x,y).getGlyph().selected(false);
-            entity.getGlyph().selected(true);
-        } else {
-            entity.getGlyph().selected(false);
-        }
-
         entity.setPos(x,y);
         entities[entityIndex(x,y)] = entity;
     };
 
-    self.setTile = function(x, y, tile) {
-        if (x < 0 || x >= self.width || y < 0 || y >= self.height) {
-            console.log("ERROR: Illegal tile coordinates");
-        } else {            
-            tile.setPos(x,y);
-            self.tiles[x][y] = tile;
-
-            if (this.selection !== undefined && x === this.selection.x && y === this.selection.y) {
-                tile.getGlyph().selected(true);
-            }
-        }
-    };
-
     self.isPassable = function(x,y) {
-        var t = self.getObjectAt(x,y);
+        var t = self.getEntity(x,y);
 
         if (t === undefined) {
             return false;
         }
 
-        return self.getObjectAt(x,y).isPassable();
-    };
-
-    self.generate = function(width, height) {
-        tiles = [];
-
-        for (var x = 0; x < width; x++) {
-            tiles.push([]);
-            for (var y = 0; y < height; y++) {
-                tiles[x].push(new Game.Tile.land(0));
-            }
-        }
-
-        self.height = tiles[0].length;
-        self.width  = tiles.length;
+        return t.isPassable();
     };
 
     self.select = function(x, y) {
-        if (this.getSelected() !== undefined) {
-            this.getSelected().getGlyph().selected(false);
-        }
-
         if (x >= 0 && y >= 0) {
             self.selection = {x: x, y: y};
-
-            this.getSelected().getGlyph().selected(true);
         } else {
             this.selection = undefined;
         }
@@ -129,7 +96,10 @@ Game.Map = (function(self){
             return undefined;
         }
 
-        return self.getObjectAt(self.selection.x, self.selection.y);
+        var x = self.selection.x;
+        var y = self.selection.y;
+
+        return self.getEntity(x,y) || self.getTile(x,y);
     };
 
     self.removeEntity = function(entity) {

@@ -24,7 +24,7 @@ Game.Tile.prototype.isPassable = function() {
     return this._passable;
 }
 
-Game.Tile.land = function(chr_index) {
+Game.Tile.land = function(chr_index, bgcolor) {
     chr_options = [' ', ',', '.'];
 
     if (chr_index == undefined || chr_index >= chr_options.length) {
@@ -32,8 +32,10 @@ Game.Tile.land = function(chr_index) {
     } else  {
         chr = chr_options[chr_index];
     }
+
+    var backgroundColor = bgcolor || '#3B5323';
     
-    this._glyph = new Game.Glyph(chr, '#526F35', '#3B5323', '#2C3D1A');
+    this._glyph = new Game.Glyph(chr, '#526F35', bgcolor, '#ffd46d');
 }
 
 Game.Tile.land.prototype = new Game.Tile();
@@ -139,8 +141,8 @@ Game.Tile.tree.prototype.grow = function() {
 Game.Tile.tree.prototype.updateGlyph = function() {
     this._glyph._char               = this.species.chr[this.stage.chr_index];
     this._glyph._foreground         = this.stage.glyph_color;
-    this._glyph._background         = '#3B5323';
-    this._glyph._selectedBackground = '#2C3D1A';
+    this._glyph._background         = undefined;
+    this._glyph._selectedBackground = '#ffd46d';
 }
 
 Game.Tile.tree.prototype.stageLength = function() {

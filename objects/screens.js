@@ -35,7 +35,6 @@ Game.Screen.playScreen = {
     _displayPosY: 0,
 
     enter: function() {
-        Game.Map.generate(200, 80, 1, 7);
         this.startTimer();
 
         this._viewportHeight = Game.getDisplayHeight()-1;
@@ -63,11 +62,22 @@ Game.Screen.playScreen = {
        for (var x = 0; x < displayWidth; x++) {
             for (var y = 0; y < displayHeight; y++) {
                 // Fetch the glyph for the tile and render it to the screen
-                var glyph = Game.Map.getObjectAt(x+offsetX, y+offsetY).getGlyph();
-                display.draw(x, y,
-                    glyph.getChar(), 
-                    glyph.getForeground(), 
-                    glyph.getBackground());
+                var tile = Game.Map.getTile(x+offsetX, y+offsetY);
+                var entity = Game.Map.getEntity(x+offsetX, y+offsetY);
+
+                var fg, bg, character;
+
+                if (entity !== undefined) {
+                    fg = entity.getGlyph().getForeground();
+                    character = entity.getGlyph().getChar();
+                } else {
+                    fg = '#ffffff';
+                    character = ' ';
+                }
+
+                bg = tile.getGlyph().getBackground();
+
+                display.draw(x, y, character, fg, bg);
             }
         }
 
