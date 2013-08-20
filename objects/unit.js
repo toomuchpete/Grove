@@ -54,7 +54,25 @@ Game.Unit = (function(self){
             }
         } else {
             var nextStep = this.route.shift();
-            Game.Map.moveEntityTo(Game.Map.getEntity(myPos.x, myPos.y), nextStep.x, nextStep.y);
+            var moved = Game.Map.moveEntityTo(Game.Map.getEntity(myPos.x, myPos.y), nextStep.x, nextStep.y);
+            if (moved === true) {
+                return true;
+            } else if (moved === Game.Map.ERR_BLOCKED) {
+                if (this.blocked === undefined) {
+                    this.blocked = 2;
+                }
+
+                if (this.blocked > 0) {
+                    // Retry
+                    this.route.unshift(nextStep);
+                    this.wait = 10;
+                    this.blocked -= 1;
+                } else {
+                    // Bad route, try something else
+                    delete this.blocked;
+                    delete this.route;
+                }
+            }
         }
     };
 

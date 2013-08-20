@@ -174,7 +174,7 @@ Game.Screen.playScreen = {
                 Game.setCommandMode('select');
             } else if (inputData.keyCode == ROT.VK_H) {
                 if (pos) {
-                    if (Game.Map.getObjectAt(pos.x, pos.y) instanceof Game.Tile.land) {
+                    if (Game.Map.getEntity(pos.x, pos.y) === undefined) {
                         Game.Sounds.error.play();
                     } else {
                         Game.TaskManager.addTask({type: 'harvest', pos: pos});

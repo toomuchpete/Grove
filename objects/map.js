@@ -6,6 +6,9 @@
 **/
 
 Game.Map = (function(self){
+    self.ERR_BLOCKED = 1;
+    self.ERR_BIG_STEP = 2;
+
     var noiseGenerator = new ROT.Noise.Simplex();
     var entities = {};
 
@@ -39,7 +42,7 @@ Game.Map = (function(self){
     self.addEntity = function(x, y, entity) {
         if (self.getEntity(x,y) !== undefined) {
             console.log("ERROR: Two entities may not occupy the same tile.");
-            return false;
+            return Game.Map.ERR_BLOCKED;
         }
 
         entity.setPos(x,y);
@@ -163,18 +166,18 @@ Game.Map = (function(self){
 
         if (self.squareDistance(entityPos.x, entityPos.y, targetX, targetY) > 1) {
             console.log("ERROR: too big of a step!");
-            return false;
+            return Game.Map.ERR_BIG_STEP;
         }
 
         if (entities[newIndex] !== undefined) {
-            console.log("ERROR: two entities cannot occupy the same tile.");
-            return false;
+            return Game.Map.ERR_BLOCKED;
         }
         // entities[newIndex] = e;
         // e.setPos(targetX,targetY);
         // delete entities[oldIndex];
         self.removeEntity(e);
         self.addEntity(targetX,targetY,e);
+        return true;
     };
 
     self.squareDistance = function(x1,y1,x2,y2) {
