@@ -1,10 +1,3 @@
-/**
-    to do:
-        - plant designations
-        - return task if you can't find a path
-        - Make sure proper checks are done for planting.
-**/
-
 Game.Map = (function(self){
     self.ERR_BLOCKED = 1;
     self.ERR_BIG_STEP = 2;
