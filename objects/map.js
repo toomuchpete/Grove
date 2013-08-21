@@ -1,8 +1,8 @@
 /**
     to do:
         - plant designations
-        - recalculate paths when you can't make a step
         - return task if you can't find a path
+        - Make sure proper checks are done for planting.
 **/
 
 Game.Map = (function(self){
@@ -11,6 +11,7 @@ Game.Map = (function(self){
 
     var noiseGenerator = new ROT.Noise.Simplex();
     var entities = {};
+    var designations = {};
 
     self.height = 100;
     self.width = 100;
@@ -172,12 +173,26 @@ Game.Map = (function(self){
         if (entities[newIndex] !== undefined) {
             return Game.Map.ERR_BLOCKED;
         }
-        // entities[newIndex] = e;
-        // e.setPos(targetX,targetY);
-        // delete entities[oldIndex];
+
         self.removeEntity(e);
         self.addEntity(targetX,targetY,e);
         return true;
+    };
+
+    self.getDesignation = function(x, y) {
+        return designations[entityIndex(x,y)];
+    };
+
+    self.removeDesignation = function(x, y) {
+        delete designations[entityIndex(x,y)];
+    }
+
+    self.designate = function(object, x, y) {
+        if (self.getDesignation(x,y) === undefined) {
+            designations[entityIndex(x,y)] = object;
+        } else {
+            return false;
+        }
     };
 
     self.squareDistance = function(x1,y1,x2,y2) {

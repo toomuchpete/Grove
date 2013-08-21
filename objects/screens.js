@@ -59,17 +59,24 @@ Game.Screen.playScreen = {
         var offsetX = this._displayPosX;
         var offsetY = this._displayPosY
 
-       for (var x = 0; x < displayWidth; x++) {
-            for (var y = 0; y < displayHeight; y++) {
+       for (var screenX = 0; screenX < displayWidth; screenX++) {
+            for (var screenY = 0; screenY < displayHeight; screenY++) {
+                var x = screenX + offsetX;
+                var y = screenY + offsetY;
+
                 // Fetch the glyph for the tile and render it to the screen
-                var tile = Game.Map.getTile(x+offsetX, y+offsetY);
-                var entity = Game.Map.getEntity(x+offsetX, y+offsetY);
+                var tile = Game.Map.getTile(x, y);
+                var entity = Game.Map.getEntity(x, y);
+                var designation = Game.Map.getDesignation(x, y);
 
                 var fg, bg, character;
 
                 if (entity !== undefined) {
                     fg = entity.getGlyph().getForeground();
                     character = entity.getGlyph().getChar();
+                } else if (designation !== undefined) {
+                    fg = '#90A090';
+                    character = '_';
                 } else {
                     fg = '#ffffff';
                     character = ' ';
@@ -77,7 +84,7 @@ Game.Screen.playScreen = {
 
                 bg = tile.getGlyph().getBackground();
 
-                display.draw(x, y, character, fg, bg);
+                display.draw(screenX, screenY, character, fg, bg);
             }
         }
 
@@ -207,12 +214,15 @@ Game.Screen.playScreen = {
                         break;
                 }
 
-                if (seed_type && pos && Game.Map.getEntity(pos.x, pos.y) === undefined) {
-                    if (Game.Inventory.getItemCount(seed_type + "_seeds") > 0) {
-                        Game.TaskManager.addTask({type: 'plant', plant: seed_type, pos: pos});
-                    } else {
-                        Game.Sounds.error.play();
-                    }
+                if (seed_type && pos 
+                    && Game.Map.getEntity(pos.x, pos.y) === undefined 
+                    && Game.Map.getDesignation(pos.x, pos.y) === undefined
+                    && Game.Inventory.getItemCount(seed_type + "_seeds") > 0) {
+                        var task = {type: 'plant', plant: seed_type, pos: pos};
+                        Game.Map.designate(task, pos.x, pos.y);
+                        Game.TaskManager.addTask(task);
+                } else {
+                    Game.Sounds.error.play();
                 }
             }
 

@@ -123,6 +123,7 @@ Game.Unit = (function(self){
                     Game.Sounds.error.play();
                 }
 
+                Game.Map.removeDesignation(taskPos.x, taskPos.y);
                 this.tasks.shift();
             }
         } else {
