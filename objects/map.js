@@ -52,8 +52,9 @@ Game.Map = (function(self){
 
     self.isPassable = function(x,y) {
         var t = self.getEntity(x,y);
+        var d = self.getDesignation(x,y);
 
-        if (t === undefined) {
+        if (t === undefined && d === undefined) {
             return true;
         }
 
