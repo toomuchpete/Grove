@@ -123,6 +123,24 @@ Game.Unit = (function(self){
             } else if (task.ticksRemaining > 0) {
                 task.ticksRemaining -= 1;
             } else {
+                if (Game.Map.getEntity(taskPos.x, taskPos.y) !== undefined) {
+                    // TODO: abstractify this?
+                    if (this.blocked === undefined) {
+                        this.blocked = 2;
+                    }
+
+                    if (this.blocked > 0) {
+                        // Retry
+                        this.wait = 10;
+                        this.blocked -= 1;
+                    } else {
+                        // TODO: check if this is a worker, if so, add a task to move out of the way
+                        console.log("Plant task cancelled, position blocked");
+                        Game.Map.removeDesignation(taskPos.x, taskPos.y);
+                        this.tasks.shift();
+                    }
+                }
+
                 if (Game.Inventory.removeItem(seedType + "_seeds") !== false) {
                     Game.Map.addEntity(taskPos.x, taskPos.y, new Game.Tile.tree(seedType));
                     Game.Sounds.plant.play();
@@ -130,6 +148,7 @@ Game.Unit = (function(self){
                     Game.Sounds.error.play();
                 }
 
+                // TODO: DRY this up
                 Game.Map.removeDesignation(taskPos.x, taskPos.y);
                 this.tasks.shift();
             }
