@@ -54,11 +54,13 @@ Game.Map = (function(self){
         var t = self.getEntity(x,y);
         var d = self.getDesignation(x,y);
 
-        if (t === undefined && d === undefined) {
-            return true;
+        if (t === undefined || t.isPassable()) {
+            if (d === undefined) {
+                return true;
+            }
         }
 
-        return t.isPassable();
+        return false;
     };
 
     self.select = function(x, y) {
