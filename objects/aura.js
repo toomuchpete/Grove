@@ -22,13 +22,15 @@ Game.Aura = (function(self){
     self.calculateAuras = function() {
         aura_strength = {};
 
-        if (Game.getScreen()._map) {
-            var e = Game.getScreen()._map._entities;
+        var entities = Game.Map.getEntities();
+        for (var e in entities) {
+            if (!entities.hasOwnProperty(e)) {
+                continue;
+            }
 
-            for (var i = 0; i < Game.getScreen()._map._entities.length; i++) {
-                if (e[i].getAura) {
-                    mergeAuras(e[i].getAura());
-                }
+            if (entities[e].getAura) {
+                console.log("++");
+                mergeAuras(entities[e].getAura());
             }
         }
     }
