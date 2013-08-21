@@ -29,7 +29,6 @@ Game.Aura = (function(self){
             }
 
             if (entities[e].getAura) {
-                console.log("++");
                 mergeAuras(entities[e].getAura());
             }
         }
