@@ -110,6 +110,13 @@ Game.Unit = (function(self){
         var taskPos = task.pos;
         var seedType = task.plant;
 
+        if (Game.Inventory.getItemCount(seedType + "_seeds") <= 0) {
+            console.log("Plant task cancelled, no seeds left");
+            Game.Map.removeDesignation(taskPos.x, taskPos.y);
+            this.tasks.shift();
+            return;
+        }
+
         if (Game.Map.squareDistance(myPos.x, myPos.y, taskPos.x, taskPos.y) <= 1) {
             if (task.ticksRemaining === undefined) {
                 task.ticksRemaining = 2;
