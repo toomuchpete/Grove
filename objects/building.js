@@ -1,4 +1,6 @@
 Game.Building = (function(self){
+    self.type = 'building';
+
     self.isEntity = function() {
         return true;
     };
@@ -33,6 +35,7 @@ Game.Building = (function(self){
             case 'workshop':
                 unit = Object.create(Game.Building);
                 unit.setGlyph(new Game.Glyph("O", "#f0f0f0"));
+                unit.subtype = 'workshop';
                 break;
             default:
                 return undefined;

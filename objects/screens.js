@@ -203,14 +203,21 @@ Game.Screen.playScreen = {
     handleInput: function(inputType, inputData) {
         if (inputType === 'keydown') {
             var pos = Game.Map.selection;
+            var entity = Game.Map.getEntity(pos.x, pos.y);
             var move_magnitude = inputData.shiftKey ? 11 : 1;
             var cMode = Game.getCommandMode();
+            var keyCode = inputData.keyCode;
 
             switch (cMode) {
+                case 'interact':
+                    if (keyCode === ROT.VK_ESCAPE) {
+                        Game.setCommandMode('select');
+                    }
+                    break;
                 case 'plant':
                     var seed_type = undefined;
 
-                    switch (inputData.keyCode) {
+                    switch (keyCode) {
                         case ROT.VK_I:
                             seed_type = 'ironwood';
                             break;
@@ -223,7 +230,7 @@ Game.Screen.playScreen = {
 
                     if (seed_type !== undefined) {
                         if (pos !== undefined
-                            && Game.Map.getEntity(pos.x, pos.y) === undefined 
+                            && entity === undefined 
                             && Game.Map.getDesignation(pos.x, pos.y) === undefined
                             && Game.Inventory.getItemCount(seed_type + "_seeds") > 0) {
                                 var task = {type: 'plant', plant: seed_type, pos: pos};
@@ -233,11 +240,10 @@ Game.Screen.playScreen = {
                             Game.Sounds.error.play();
                         }
                     }
-                case 'select':
                 case 'build':
                     var building = undefined;
 
-                    switch (inputData.keyCode) {
+                    switch (keyCode) {
                         case ROT.VK_O:
                             building = 'workshop';
                             break;
@@ -245,7 +251,7 @@ Game.Screen.playScreen = {
 
                     if (building !== undefined) {
                         if (pos !== undefined
-                            && Game.Map.getEntity(pos.x, pos.y) === undefined 
+                            && entity === undefined 
                             && Game.Map.getDesignation(pos.x, pos.y) === undefined
                             && Game.Inventory.getItemCount('wood') >= 10) {
                                 var task = {type: 'build', building: building, pos: pos};
@@ -255,20 +261,23 @@ Game.Screen.playScreen = {
                             Game.Sounds.error.play();
                         }
                     }
+                case 'select':
                 default:
-                    if (inputData.keyCode === ROT.VK_LEFT) {
+                    // Moement and mode switching code
+                    if (keyCode === ROT.VK_LEFT) {
                         Game.Map.moveSelection(-1 * move_magnitude, 0);
-                    } else if (inputData.keyCode === ROT.VK_RIGHT) {
+                    } else if (keyCode === ROT.VK_RIGHT) {
                         Game.Map.moveSelection(move_magnitude, 0);
-                    } else if (inputData.keyCode === ROT.VK_UP) {
+                    } else if (keyCode === ROT.VK_UP) {
                         Game.Map.moveSelection(0, -1 * move_magnitude);
-                    } else if (inputData.keyCode === ROT.VK_DOWN) {
+                    } else if (keyCode === ROT.VK_DOWN) {
                         Game.Map.moveSelection(0, move_magnitude);
-                    } else if (inputData.keyCode === ROT.VK_ESCAPE) {
+                    } else if (keyCode === ROT.VK_ESCAPE) {
                         Game.setCommandMode('select');
-                    } else if (inputData.keyCode === ROT.VK_H) {
+                    } else if (keyCode === ROT.VK_H) {
+                        // TODO: Only harvest trees?
                         if (pos) {
-                            if (Game.Map.getEntity(pos.x, pos.y) === undefined) {
+                            if (entity === undefined) {
                                 Game.Sounds.error.play();
                             } else {
                                 Game.TaskManager.addTask({type: 'harvest', pos: pos});
@@ -276,10 +285,15 @@ Game.Screen.playScreen = {
                         } else {
                             Game.Sounds.error.play();
                         }
-                    } else if (inputData.keyCode === ROT.VK_P) {
+                    } else if (keyCode === ROT.VK_P) {
                         Game.setCommandMode('plant');
-                    } else if (inputData.keyCode === ROT.VK_B) {
+                    } else if (keyCode === ROT.VK_B) {
                         Game.setCommandMode('build');
+                    } else if (keyCode === ROT.VK_ENTER || keyCode === ROT.VK_RETURN) {
+                        if (entity !== undefined && entity.type === 'building') {
+                            Game.setCommandMode('interact');
+                            this.centerSelectionWithinViewport();
+                        }
                     }
 
                     this.ensureSelectionWithinViewport();
