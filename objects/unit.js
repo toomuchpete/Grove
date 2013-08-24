@@ -42,21 +42,47 @@ Game.Unit = (function(self){
 
     self.moveNextToTick = function() {
         // Can we reach the spot?
+        // TODO: Check spots in order of distance to the worker
+        var standingOptions = [[0,1], [1,0], [0,-1], [-1,0]].randomize();
         var task = this.tasks[0];
         var myPos = this.getPos();
         var taskPos = task.pos;
+        var standPos = undefined;
 
-        if (Game.Map.squareDistance(myPos.x, myPos.y, taskPos.x, taskPos.y) <= 1) {
+        if (Game.Map.squareDistance(myPos.x, myPos.y, taskPos.x, taskPos.y) === 1) {
             delete this.route;
             this.tasks.shift();
         } else if (this.route === undefined) {
-            this.route = Game.Map.getRoute(this, task.pos.x, task.pos.y);
+            for (var i = 0; i < standingOptions.length; i++) {
+                standPos = {x: taskPos.x + standingOptions[i][0], y: taskPos.y + standingOptions[i][1]};
+
+                if (Game.Map.isPassable(standPos.x, standPos.y) && Game.Map.getDesignation(standPos.x, standPos.y) === undefined) {
+                    break;
+                } else {
+                    standPos = undefined;
+                }
+            }
+
+            if (standPos === undefined) {
+                this.route = [];
+            } else {
+                this.route = Game.Map.getRoute(this, standPos.x, standPos.y);    
+            }
+
             if (this.route.length === 0) {
+                // TODO: This won't clear designations
                 console.log("ERROR: No route available, all tasks cancelled");
                 this.tasks = [];
             }
         } else {
+            var lastStep = this.route[this.route.length-1];
             var nextStep = this.route.shift();
+
+            if (!Game.Map.isPassable(nextStep.x, nextStep.y) || !Game.Map.isPassable(lastStep.x, lastStep.y) || Game.Map.getDesignation(lastStep.x, lastStep.y) !== undefined) {
+                this.route = undefined;
+                return;
+            }
+
             var moved = Game.Map.moveEntityTo(Game.Map.getEntity(myPos.x, myPos.y), nextStep.x, nextStep.y);
             if (moved === true) {
                 return true;
