@@ -31,7 +31,7 @@ Game.Building = (function(self){
 
         switch (type) {
             case 'workshop':
-                unit = Object.create(Game.Unit);
+                unit = Object.create(Game.Building);
                 unit.setGlyph(new Game.Glyph("O", "#f0f0f0"));
                 break;
             default:
