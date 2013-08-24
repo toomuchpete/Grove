@@ -108,6 +108,11 @@ Game.Screen.playScreen = {
         }
 
         display.drawText(1, displayHeight, statusText, displayWidth-2);
+
+        if (Game.Map.selection !== undefined) {
+            var locationText = "(" + Game.Map.selection.x + ", " + Game.Map.selection.y + ")";
+            display.drawText(displayWidth - locationText.length, 0, locationText);
+        }
     },
 
     startTimer: function() {
