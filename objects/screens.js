@@ -203,92 +203,88 @@ Game.Screen.playScreen = {
     handleInput: function(inputType, inputData) {
         if (inputType === 'keydown') {
             var pos = Game.Map.selection;
-            var move_magnitude = 1;
-            if (inputData.shiftKey) {
-                move_magnitude += 10;
-            }
+            var move_magnitude = inputData.shiftKey ? 11 : 1;
+            var cMode = Game.getCommandMode();
 
-            // Selection Movement
-            if (inputData.keyCode === ROT.VK_LEFT) {
-                Game.Map.moveSelection(-1 * move_magnitude, 0);
-            } else if (inputData.keyCode === ROT.VK_RIGHT) {
-                Game.Map.moveSelection(move_magnitude, 0);
-            } else if (inputData.keyCode === ROT.VK_UP) {
-                Game.Map.moveSelection(0, -1 * move_magnitude);
-            } else if (inputData.keyCode === ROT.VK_DOWN) {
-                Game.Map.moveSelection(0, move_magnitude);
-            } else if (inputData.keyCode === ROT.VK_ESCAPE) {
-                Game.setCommandMode('select');
-            } else if (inputData.keyCode === ROT.VK_H) {
-                if (pos) {
-                    if (Game.Map.getEntity(pos.x, pos.y) === undefined) {
-                        Game.Sounds.error.play();
-                    } else {
-                        Game.TaskManager.addTask({type: 'harvest', pos: pos});
+            switch (cMode) {
+                case 'plant':
+                    var seed_type = undefined;
+
+                    switch (inputData.keyCode) {
+                        case ROT.VK_I:
+                            seed_type = 'ironwood';
+                            break;
+                        case ROT.VK_R:
+                            seed_type = 'rock_elm';
+                            break;
+                        default:
+                            break;
                     }
-                } else {
-                    Game.Sounds.error.play();
-                }
-            } else if (inputData.keyCode === ROT.VK_P) {
-                Game.setCommandMode('plant');
-            } else if (inputData.keyCode === ROT.VK_B) {
-                Game.setCommandMode('build');
-            } else if (inputData.keyCode === ROT.VK_M) {
-                var entities = Game.Map.getEntities();
-                var pos = Game.Map.selection;
 
-                for (var i = 0; i < entities.length; i++) {
-                    var e = entities[i];
+                    if (seed_type !== undefined) {
+                        if (pos !== undefined
+                            && Game.Map.getEntity(pos.x, pos.y) === undefined 
+                            && Game.Map.getDesignation(pos.x, pos.y) === undefined
+                            && Game.Inventory.getItemCount(seed_type + "_seeds") > 0) {
+                                var task = {type: 'plant', plant: seed_type, pos: pos};
+                                Game.Map.designate(task, pos.x, pos.y);
+                                Game.TaskManager.addTask(task);
+                        } else {
+                            Game.Sounds.error.play();
+                        }
+                    }
+                case 'select':
+                case 'build':
+                    var building = undefined;
 
-                    var path = Game.Map.getRoute(e, pos.x, pos.y);
-                }
-            } else if (Game.getCommandMode() === 'plant') {
-                var seed_type = undefined;
+                    switch (inputData.keyCode) {
+                        case ROT.VK_O:
+                            building = 'workshop';
+                            break;
+                    }
 
-                switch (inputData.keyCode) {
-                    case ROT.VK_I:
-                        seed_type = 'ironwood';
-                        break;
-                    case ROT.VK_R:
-                        seed_type = 'rock_elm';
-                        break;
-                    default:
-                        break;
-                }
+                    if (building !== undefined) {
+                        if (pos !== undefined
+                            && Game.Map.getEntity(pos.x, pos.y) === undefined 
+                            && Game.Map.getDesignation(pos.x, pos.y) === undefined
+                            && Game.Inventory.getItemCount('wood') >= 10) {
+                                var task = {type: 'build', building: building, pos: pos};
+                                Game.Map.designate(task, pos.x, pos.y);
+                                Game.TaskManager.addTask(task);
+                        } else {
+                            Game.Sounds.error.play();
+                        }
+                    }
+                default:
+                    if (inputData.keyCode === ROT.VK_LEFT) {
+                        Game.Map.moveSelection(-1 * move_magnitude, 0);
+                    } else if (inputData.keyCode === ROT.VK_RIGHT) {
+                        Game.Map.moveSelection(move_magnitude, 0);
+                    } else if (inputData.keyCode === ROT.VK_UP) {
+                        Game.Map.moveSelection(0, -1 * move_magnitude);
+                    } else if (inputData.keyCode === ROT.VK_DOWN) {
+                        Game.Map.moveSelection(0, move_magnitude);
+                    } else if (inputData.keyCode === ROT.VK_ESCAPE) {
+                        Game.setCommandMode('select');
+                    } else if (inputData.keyCode === ROT.VK_H) {
+                        if (pos) {
+                            if (Game.Map.getEntity(pos.x, pos.y) === undefined) {
+                                Game.Sounds.error.play();
+                            } else {
+                                Game.TaskManager.addTask({type: 'harvest', pos: pos});
+                            }
+                        } else {
+                            Game.Sounds.error.play();
+                        }
+                    } else if (inputData.keyCode === ROT.VK_P) {
+                        Game.setCommandMode('plant');
+                    } else if (inputData.keyCode === ROT.VK_B) {
+                        Game.setCommandMode('build');
+                    }
 
-                if (seed_type && pos 
-                    && Game.Map.getEntity(pos.x, pos.y) === undefined 
-                    && Game.Map.getDesignation(pos.x, pos.y) === undefined
-                    && Game.Inventory.getItemCount(seed_type + "_seeds") > 0) {
-                        var task = {type: 'plant', plant: seed_type, pos: pos};
-                        Game.Map.designate(task, pos.x, pos.y);
-                        Game.TaskManager.addTask(task);
-                } else {
-                    Game.Sounds.error.play();
-                }
-            } else if (Game.getCommandMode() === 'build') {
-                var building = undefined;
-
-                switch (inputData.keyCode) {
-                    case ROT.VK_O:
-                        building = 'workshop';
-                        break;
-                }
-
-                if (building !== undefined && pos !== undefined
-                    && Game.Map.getEntity(pos.x, pos.y) === undefined 
-                    && Game.Map.getDesignation(pos.x, pos.y) === undefined
-                    && Game.Inventory.getItemCount('wood') >= 10) {
-                        var task = {type: 'build', building: building, pos: pos};
-                        Game.Map.designate(task, pos.x, pos.y);
-                        Game.TaskManager.addTask(task);
-                } else {
-                    Game.Sounds.error.play();
-                }
-
+                    this.ensureSelectionWithinViewport();
+                    break;
             }
-
-            this.ensureSelectionWithinViewport();
         } else if (inputType === 'click') {
             var pos = this.eventToPosition(inputData);
             if (pos) {
