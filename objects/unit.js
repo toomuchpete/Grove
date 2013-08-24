@@ -34,6 +34,9 @@ Game.Unit = (function(self){
             case 'plant':
                 this.plantTick();
                 break;
+            case 'build':
+                this.buildTick();
+                break;
         };
     };
 
@@ -143,6 +146,62 @@ Game.Unit = (function(self){
 
                 if (Game.Inventory.removeItem(seedType + "_seeds") !== false) {
                     Game.Map.addEntity(taskPos.x, taskPos.y, new Game.Tile.tree(seedType));
+                    Game.Sounds.plant.play();
+                } else {
+                    Game.Sounds.error.play();
+                }
+
+                // TODO: DRY this up
+                Game.Map.removeDesignation(taskPos.x, taskPos.y);
+                this.tasks.shift();
+            }
+        } else {
+            // We're not close enough, need to walk there first.
+            this.tasks.unshift({type: 'moveNextTo', pos: taskPos});
+        }
+    };
+
+    self.buildTick = function() {
+        var task = this.tasks[0];
+
+        // Can we reach the spot?
+        var myPos = this.getPos();
+        var taskPos = task.pos;
+        var building = task.building;
+
+        if (Game.Inventory.getItemCount("wood") < 10) {
+            console.log("Build task cancelled, not enough wood left");
+            Game.Map.removeDesignation(taskPos.x, taskPos.y);
+            this.tasks.shift();
+            return;
+        }
+
+        if (Game.Map.squareDistance(myPos.x, myPos.y, taskPos.x, taskPos.y) <= 1) {
+            if (task.ticksRemaining === undefined) {
+                task.ticksRemaining = 2;
+            } else if (task.ticksRemaining > 0) {
+                task.ticksRemaining -= 1;
+            } else {
+                if (Game.Map.getEntity(taskPos.x, taskPos.y) !== undefined) {
+                    // TODO: abstractify this?
+                    if (this.blocked === undefined) {
+                        this.blocked = 2;
+                    }
+
+                    if (this.blocked > 0) {
+                        // Retry
+                        this.wait = 2;
+                        this.blocked -= 1;
+                    } else {
+                        // TODO: check if this is a worker, if so, add a task to move out of the way
+                        console.log("Build task cancelled, position blocked");
+                        Game.Map.removeDesignation(taskPos.x, taskPos.y);
+                        this.tasks.shift();
+                    }
+                }
+
+                if (Game.Inventory.removeItem('wood', 10) !== false) {
+                    Game.Map.addEntity(taskPos.x, taskPos.y, new Game.Building.create(building));
                     Game.Sounds.plant.play();
                 } else {
                     Game.Sounds.error.play();

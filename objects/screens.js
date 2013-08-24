@@ -194,7 +194,7 @@ Game.Screen.playScreen = {
                 Game.Map.moveSelection(0, move_magnitude);
             } else if (inputData.keyCode === ROT.VK_ESCAPE) {
                 Game.setCommandMode('select');
-            } else if (inputData.keyCode == ROT.VK_H) {
+            } else if (inputData.keyCode === ROT.VK_H) {
                 if (pos) {
                     if (Game.Map.getEntity(pos.x, pos.y) === undefined) {
                         Game.Sounds.error.play();
@@ -204,8 +204,10 @@ Game.Screen.playScreen = {
                 } else {
                     Game.Sounds.error.play();
                 }
-            } else if (inputData.keyCode == ROT.VK_P) {
+            } else if (inputData.keyCode === ROT.VK_P) {
                 Game.setCommandMode('plant');
+            } else if (inputData.keyCode === ROT.VK_B) {
+                Game.setCommandMode('build');
             } else if (inputData.keyCode === ROT.VK_M) {
                 var entities = Game.Map.getEntities();
                 var pos = Game.Map.selection;
@@ -215,7 +217,7 @@ Game.Screen.playScreen = {
 
                     var path = Game.Map.getRoute(e, pos.x, pos.y);
                 }
-            } else if (Game.getCommandMode() == 'plant') {
+            } else if (Game.getCommandMode() === 'plant') {
                 var seed_type = undefined;
 
                 switch (inputData.keyCode) {
@@ -239,6 +241,26 @@ Game.Screen.playScreen = {
                 } else {
                     Game.Sounds.error.play();
                 }
+            } else if (Game.getCommandMode() === 'build') {
+                var building = undefined;
+
+                switch (inputData.keyCode) {
+                    case ROT.VK_O:
+                        building = 'workshop';
+                        break;
+                }
+
+                if (building !== undefined && pos !== undefined
+                    && Game.Map.getEntity(pos.x, pos.y) === undefined 
+                    && Game.Map.getDesignation(pos.x, pos.y) === undefined
+                    && Game.Inventory.getItemCount('wood') >= 10) {
+                        var task = {type: 'build', building: building, pos: pos};
+                        Game.Map.designate(task, pos.x, pos.y);
+                        Game.TaskManager.addTask(task);
+                } else {
+                    Game.Sounds.error.play();
+                }
+
             }
 
             this.ensureSelectionWithinViewport();
