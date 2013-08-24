@@ -235,7 +235,7 @@ Game.Screen.playScreen = {
                             && Game.Inventory.getItemCount(seed_type + "_seeds") > 0) {
                                 var task = {type: 'plant', plant: seed_type, pos: pos};
                                 Game.Map.designate(task, pos.x, pos.y);
-                                Game.TaskManager.addTask(task);
+                                Game.TaskManager.addUnitTask(task);
                         } else {
                             Game.Sounds.error.play();
                         }
@@ -256,7 +256,7 @@ Game.Screen.playScreen = {
                             && Game.Inventory.getItemCount('wood') >= 10) {
                                 var task = {type: 'build', building: building, pos: pos};
                                 Game.Map.designate(task, pos.x, pos.y);
-                                Game.TaskManager.addTask(task);
+                                Game.TaskManager.addUnitTask(task);
                         } else {
                             Game.Sounds.error.play();
                         }
@@ -280,7 +280,7 @@ Game.Screen.playScreen = {
                             if (entity === undefined) {
                                 Game.Sounds.error.play();
                             } else {
-                                Game.TaskManager.addTask({type: 'harvest', pos: pos});
+                                Game.TaskManager.addUnitTask({type: 'harvest', pos: pos});
                             }
                         } else {
                             Game.Sounds.error.play();

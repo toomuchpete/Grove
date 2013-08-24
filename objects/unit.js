@@ -16,7 +16,7 @@ Game.Unit = (function(self){
         }
 
         if (this.tasks.length === 0) {
-            var newTask = Game.TaskManager.getTask();
+            var newTask = Game.TaskManager.getUnitTask();
             if (newTask !== undefined) {
                 this.tasks.unshift(newTask);
             } else {

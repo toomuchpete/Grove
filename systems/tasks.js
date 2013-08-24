@@ -1,17 +1,22 @@
 Game.TaskManager = (function(self){
-    var q = [];
+    var unitQueue = [];
+    var buildingQueue = [];
 
-    self.getTask = function() {
-        return q.shift();
+    self.getUnitTask = function() {
+        return unitQueue.shift();
     };
 
-    self.addTask = function(task) {
-        return q.push(task);
+    self.addUnitTask = function(task) {
+        return unitQueue.push(task);
     };
 
-    self.returnTask = function(task) {
-        self.addTask(task);
+    self.getBuildingTask = function() {
+        return buildingQueue.shift();
     };
+
+    self.addBuildingTask = function(task) {
+        return buildingQueue.push(task);
+    }
 
     return self;
 }({}));
