@@ -40,10 +40,28 @@ Game.Screen.playScreen = {
         this._viewportHeight = Game.getDisplayHeight()-1;
         this._viewportWidth = Game.getDisplayWidth();
 
-        Game.Map.addEntity(0,0,Game.Unit.create('worker'));
+        var startX = Math.floor(ROT.RNG.getNormal(200, 25));
+        var startY = Math.floor(ROT.RNG.getNormal(200, 25));
+
+        var quad = ROT.RNG.getWeightedValue({upper_left: 1, upper_right: 1, lower_left: 1, lower_right: 1});
+
+        switch(quad) {
+            case 'upper_left':
+                startX *= -1;
+                startY *= -1;
+                break;
+            case 'upper_right':
+                startY *= -1;
+                break;
+            case 'lower_left':
+                startX *= -1;
+                break;
+        }
+
+        Game.Map.addEntity(startX,startY,Game.Unit.create('worker'));
 
         Game.setCommandMode('select');
-        Game.Map.select(0,0);
+        Game.Map.select(startX,startY);
         this.centerSelectionWithinViewport();
     },
     
@@ -110,7 +128,7 @@ Game.Screen.playScreen = {
         display.drawText(1, displayHeight, statusText, displayWidth-2);
 
         if (Game.Map.selection !== undefined) {
-            var locationText = "(" + Game.Map.selection.x + ", " + Game.Map.selection.y + ")";
+            var locationText = "(" + Game.Map.selection.x + "," + Game.Map.selection.y + ")";
             display.drawText(displayWidth - locationText.length, 0, locationText);
         }
     },
