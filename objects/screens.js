@@ -40,8 +40,7 @@ Game.Screen.playScreen = {
         this._viewportHeight = Game.getDisplayHeight()-1;
         this._viewportWidth = Game.getDisplayWidth();
 
-        Game.Map.addEntity(-2,-2,Game.Unit.create('worker'));
-        Game.Map.addEntity(2,2,Game.Unit.create('worker'));
+        Game.Map.addEntity(0,0,Game.Unit.create('worker'));
 
         Game.setCommandMode('select');
         Game.Map.select(0,0);
@@ -99,6 +98,9 @@ Game.Screen.playScreen = {
                 break;
             case 'plant':
                 statusText = "Choose a type of tree to plant: Ironwood (i) or Rock Elm (r)";
+                break;
+            case 'build':
+                statusText = "To build a workshop (10 wood required), press 'o'";
                 break;
             default:
                 statusText = "Command mode: " + cMode;
