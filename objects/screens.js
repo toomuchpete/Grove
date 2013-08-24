@@ -40,11 +40,12 @@ Game.Screen.playScreen = {
         this._viewportHeight = Game.getDisplayHeight()-1;
         this._viewportWidth = Game.getDisplayWidth();
 
-        Game.Map.addEntity(4,4,Game.Unit.create('worker'));
+        Game.Map.addEntity(-2,-2,Game.Unit.create('worker'));
         Game.Map.addEntity(2,2,Game.Unit.create('worker'));
 
         Game.setCommandMode('select');
         Game.Map.select(0,0);
+        this.centerSelectionWithinViewport();
     },
     
     exit: function() {
@@ -121,8 +122,8 @@ Game.Screen.playScreen = {
         var displayWidth = Game.getDisplayWidth();
         var displayHeight = Game.getDisplayHeight();
 
-        this._displayPosX = Math.max(0, Math.min(Game.Map.width - displayWidth, this._displayPosX + dX));
-        this._displayPosY = Math.max(0, Math.min(Game.Map.height - displayHeight, this._displayPosY + dY));
+        this._displayPosX += dX;
+        this._displayPosY += dY;
     },
 
     eventToPosition: function(e) {
@@ -134,6 +135,20 @@ Game.Screen.playScreen = {
         }
     },
     
+    centerSelectionWithinViewport: function() {
+        var x = Game.Map.selection.x;
+        var y = Game.Map.selection.y;
+        var vx = this._displayPosX;
+        var vy = this._displayPosY;
+        var vh = this._viewportHeight;
+        var vw = this._viewportWidth;
+
+        var targetDisplayX = x - Math.floor(vw/2);
+        var targetDisplayY = y - Math.floor(vh/2);
+
+        this.move(targetDisplayX - vx, targetDisplayY - vy);
+    },
+
     ensureSelectionWithinViewport: function() {
         var x = Game.Map.selection.x;
         var y = Game.Map.selection.y;
@@ -147,15 +162,15 @@ Game.Screen.playScreen = {
             this.move(x - (vx+margin), 0);
         }
 
-        if (x >= vx+vw-5) {
+        if (x >= vx+vw-margin) {
             this.move(x - (vx+(vw-1)-(margin)), 0);
         }
 
-        if (y < vy) {
+        if (y < vy+margin) {
             this.move(0, y - (vy+margin));
         }
 
-        if (y >= vy+vh-5) {
+        if (y >= vy+vh-margin) {
             this.move(0, y - (vy+(vh-1)-margin));
         }
     },
@@ -229,9 +244,12 @@ Game.Screen.playScreen = {
             this.ensureSelectionWithinViewport();
         } else if (inputType === 'click') {
             var pos = this.eventToPosition(inputData);
-
             if (pos) {
                 Game.Map.select(pos[0], pos[1]);
+
+                if (inputData.shiftKey === true) {
+                    this.centerSelectionWithinViewport();
+                }
             } else {
                 Game.Map.select();
             }

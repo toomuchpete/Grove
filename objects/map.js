@@ -22,7 +22,7 @@ Game.Map = (function(self){
         var b = Math.floor(bgColors.b[0] + Math.abs(noise)*(bgColors.b[1]-bgColors.b[0]));
         var color = "rgb(" + r + "," + g + "," + b + ")";
     
-        if (self.selection && self.selection.x === x && self.selection.y === y) {
+        if (self.selection !== undefined && self.selection.x === x && self.selection.y === y) {
             color = '#004000';
         }
 
@@ -57,11 +57,7 @@ Game.Map = (function(self){
     };
 
     self.select = function(x, y) {
-        if (x >= 0 && y >= 0) {
-            self.selection = {x: x, y: y};
-        } else {
-            this.selection = undefined;
-        }
+        self.selection = {x: x, y: y};
     };
 
     self.moveSelection = function(dx, dy) {
@@ -74,19 +70,19 @@ Game.Map = (function(self){
 
         var newSelectedX = this.selection.x + dx;
 
-        if (newSelectedX >= width) {
-            newSelectedX = width-1;
-        } else if (newSelectedX < 0) {
-            newSelectedX = 0;
-        }
+        // if (newSelectedX >= width) {
+        //     newSelectedX = width-1;
+        // } else if (newSelectedX < 0) {
+        //     newSelectedX = 0;
+        // }
 
         var newSelectedY = this.selection.y + dy;
 
-        if (newSelectedY >= height) {
-            newSelectedY = height-1;
-        } else if (newSelectedY < 0) {
-            newSelectedY = 0;
-        }
+        // if (newSelectedY >= height) {
+        //     newSelectedY = height-1;
+        // } else if (newSelectedY < 0) {
+        //     newSelectedY = 0;
+        // }
 
         this.select(newSelectedX, newSelectedY);
     };
