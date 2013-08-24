@@ -21,9 +21,15 @@ Game.UI = {
                             tile.stage.name,
                             progress_pct
                         ));
-                     } else {
+                    } else if (tile.type !== undefined) {
+                        if (tile.type === 'building') {
+                            this.elements.inspect.html("This is a building of some sort.");
+                        } else if (tile.type === 'unit') {
+                            this.elements.inspect.html("This is a unit of some sort.");
+                        }
+                    } else {
                         this.elements.inspect.html('&#175;\\_(&#12484;)_/&#175;');
-                     }
+                    }
                 } else {
                     this.elements.inspect.html("Click a tile to see its stats.");
                 }
