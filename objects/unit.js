@@ -184,7 +184,7 @@ Game.Unit = (function(self){
         switch (type) {
             case 'worker':
                 unit = Object.create(Game.Unit);
-                unit.setGlyph(new Game.Glyph("w", "#f0f0f0", "#3B5323", "#2C3D1A"));
+                unit.setGlyph(new Game.Glyph("w", "#f0f0f0"));
                 break;
             default:
                 return undefined;
