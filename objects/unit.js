@@ -283,3 +283,20 @@ Game.Unit = (function(self){
 
     return self;
 }({}));
+
+Game.Unit.count = function(type) {
+    var entities = Game.Map.getEntities();
+    var count = 0;
+
+    for (var id in entities) {
+        if (!entities.hasOwnProperty(id)) {
+            continue;
+        }
+
+        if (type === undefined || (entities[id].subtype !== undefined && entities[id].subtype === type)) {
+            count += 1;
+        }
+    }
+
+    return count;
+};
