@@ -120,6 +120,9 @@ Game.Screen.playScreen = {
             case 'build':
                 statusText = "To build a workshop (10 wood required), press 'o'";
                 break;
+            case 'interact':
+                statusText = "Press 'c' to create new units, then the unit type (w).";
+                break;
             default:
                 statusText = "Command mode: " + cMode;
                 break;
@@ -210,7 +213,12 @@ Game.Screen.playScreen = {
 
             switch (cMode) {
                 case 'interact':
-                    if (keyCode === ROT.VK_ESCAPE) {
+                    var keepInteracting;
+                    if (entity.handleInput !== undefined) {
+                        keepInteracting = entity.handleInput(inputData)
+                    }
+
+                    if (keepInteracting !== true) {
                         Game.setCommandMode('select');
                     }
                     break;

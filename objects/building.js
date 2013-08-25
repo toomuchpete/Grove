@@ -1,4 +1,5 @@
 Game.Building = (function(self){
+    self.tasks = [];
     self.type = 'building';
 
     self.isEntity = function() {
@@ -27,6 +28,32 @@ Game.Building = (function(self){
     self.getPos = function() {
         return this.pos;
     };
+
+    self.handleInput = function(inputData) {
+        var keyCode = inputData.keyCode;
+
+        if (this.mode === 'create') {
+            if (keyCode === ROT.VK_ESCAPE) {
+                delete this.mode;
+            } else if (keyCode === ROT.VK_W) {
+                if (Game.Unit.count('worker') < 5) {
+                    this.tasks.push({type: 'createUnit', unitType: 'worker'});    
+                } else {
+                    console.log("ERROR: Worker limit reached.");
+                }
+            } else {
+                Game.Sounds.error.play();
+            }
+        } else if (keyCode === ROT.VK_ESCAPE) {
+            return false;
+        } else if (keyCode === ROT.VK_C) {
+            this.mode = 'create';
+        } else if (keyCode === ROT.VK_SLASH) {
+            console.log(this.tasks);
+        }
+
+        return true;
+    }
 
     self.create = function(type) {
         var unit;
