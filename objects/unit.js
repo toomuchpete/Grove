@@ -253,6 +253,8 @@ Game.Unit = (function(self){
                 this.tasks.push({type: 'moveNextTo', pos: {x: pos[0], y: pos[1]}});
                 return false;
             }
+        } else if (inputData.keyCode === ROT.VK_ESCAPE) {
+            return false;
         }
 
         return true;
