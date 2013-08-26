@@ -229,7 +229,7 @@ Game.Unit = (function(self){
                 }
 
                 if (Game.Inventory.removeItem('wood', 10) !== false) {
-                    Game.Map.addEntity(taskPos.x, taskPos.y, new Game.Building.create(building));
+                    Game.Map.addEntity(taskPos.x, taskPos.y, Game.Building.create(building));
                     Game.Sounds.plant.play();
                 } else {
                     Game.Sounds.error.play();
