@@ -298,7 +298,7 @@ Game.Screen.playScreen = {
                     } else if (keyCode === ROT.VK_B) {
                         Game.setCommandMode('build');
                     } else if (keyCode === ROT.VK_ENTER || keyCode === ROT.VK_RETURN) {
-                        if (entity !== undefined && entity.type === 'building') {
+                        if (entity !== undefined && entity.handleInput !== undefined) {
                             Game.setCommandMode('interact');
                             this.centerSelectionWithinViewport();
                         }

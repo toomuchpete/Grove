@@ -243,7 +243,20 @@ Game.Unit = (function(self){
             // We're not close enough, need to walk there first.
             this.tasks.unshift({type: 'moveNextTo', pos: taskPos});
         }
-    }
+    };
+
+    self.handleInput = function(inputType, inputData) {
+        if (inputType === 'click') {
+            var pos = Game.getScreen().eventToPosition(inputData);
+
+            if (pos) {
+                this.tasks.push({type: 'moveNextTo', pos: {x: pos[0], y: pos[1]}});
+                return false;
+            }
+        }
+
+        return true;
+    };
 
     self.getGlyph = function() {
         return this.glyph;
