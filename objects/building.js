@@ -95,27 +95,31 @@ Game.Building = (function(self){
         return this.pos;
     };
 
-    self.handleInput = function(inputData) {
+    self.handleInput = function(inputType, inputData) {
         var keyCode = inputData.keyCode;
 
-        if (this.mode === 'create') {
-            if (keyCode === ROT.VK_ESCAPE) {
-                delete this.mode;
-            } else if (keyCode === ROT.VK_W) {
-                if (Game.Unit.count('worker') < 5) {
-                    this.tasks.push({type: 'createUnit', unitType: 'worker'});    
+        if (inputType === 'keydown') {
+            if (this.mode === 'create') {
+                if (keyCode === ROT.VK_ESCAPE) {
+                    delete this.mode;
+                } else if (keyCode === ROT.VK_W) {
+                    if (Game.Unit.count('worker') < 5) {
+                        this.tasks.push({type: 'createUnit', unitType: 'worker'});    
+                    } else {
+                        console.log("ERROR: Worker limit reached.");
+                    }
                 } else {
-                    console.log("ERROR: Worker limit reached.");
+                    Game.Sounds.error.play();
                 }
-            } else {
-                Game.Sounds.error.play();
-            }
-        } else if (keyCode === ROT.VK_ESCAPE) {
-            return false;
-        } else if (keyCode === ROT.VK_C) {
-            this.mode = 'create';
-        } else if (keyCode === ROT.VK_SLASH) {
-            console.log(this.tasks);
+            } else if (keyCode === ROT.VK_ESCAPE) {
+                return false;
+            } else if (keyCode === ROT.VK_C) {
+                this.mode = 'create';
+            } else if (keyCode === ROT.VK_SLASH) {
+                console.log(this.tasks);
+            }            
+        } else if (inputType === 'click') {
+            console.log("ERROR: Buildings can't move, silly!")
         }
 
         return true;

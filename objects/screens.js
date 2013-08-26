@@ -204,24 +204,24 @@ Game.Screen.playScreen = {
     },
 
     handleInput: function(inputType, inputData) {
-        if (inputType === 'keydown') {
-            var pos = Game.Map.selection;
-            var entity = Game.Map.getEntity(pos.x, pos.y);
+        var cMode = Game.getCommandMode();
+        var pos = Game.Map.selection;
+        var entity = Game.Map.getEntity(pos.x, pos.y);
+
+        if (cMode === 'interact') {
+            var keepInteracting;
+            if (entity !== undefined && entity.handleInput !== undefined) {
+                keepInteracting = entity.handleInput(inputType, inputData)
+            }
+
+            if (keepInteracting !== true) {
+                Game.setCommandMode('select');
+            }
+        } else if (inputType === 'keydown') {
             var move_magnitude = inputData.shiftKey ? 11 : 1;
-            var cMode = Game.getCommandMode();
             var keyCode = inputData.keyCode;
 
             switch (cMode) {
-                case 'interact':
-                    var keepInteracting;
-                    if (entity.handleInput !== undefined) {
-                        keepInteracting = entity.handleInput(inputData)
-                    }
-
-                    if (keepInteracting !== true) {
-                        Game.setCommandMode('select');
-                    }
-                    break;
                 case 'plant':
                     var seed_type = undefined;
 
