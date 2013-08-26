@@ -18,11 +18,12 @@ var Game = (function(self){
         });
     }
 
+    bindEventToScreen('keypress');
     bindEventToScreen('keydown');
     bindEventToScreen('click', display.getContainer());
     // bindEventToScreen('touchstart');
     // bindEventToScreen('keyup');
-    // bindEventToScreen('keypress');
+    
 
 
     self.setup = function() {

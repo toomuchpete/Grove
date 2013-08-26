@@ -97,7 +97,10 @@ Game.Building = (function(self){
 
     self.handleInput = function(inputType, inputData) {
         var keyCode = inputData.keyCode;
-
+        if (inputType === 'keypress' && inputData.charCode !== undefined) {
+            var character = String.fromCharCode(inputData.charCode);
+        }
+        
         if (inputType === 'keydown') {
             if (this.mode === 'create') {
                 if (keyCode === ROT.VK_ESCAPE) {
@@ -115,9 +118,11 @@ Game.Building = (function(self){
                 return false;
             } else if (keyCode === ROT.VK_C) {
                 this.mode = 'create';
-            } else if (keyCode === ROT.VK_SLASH) {
+            }
+        } else if (inputType === 'keypress') {
+            if (character === '?') {
                 console.log(this.tasks);
-            }            
+            }
         } else if (inputType === 'click') {
             console.log("ERROR: Buildings can't move, silly!")
         }
