@@ -136,6 +136,11 @@ Game.Tile.tree.prototype.grow = function() {
         this.updateGlyph();
         Game.Sounds.growth.play();
     }
+
+    if (this.harvestAt === this.stage_index) {
+        delete this.harvestAt;
+        Game.TaskManager.addUnitTask({type: 'harvest', pos: this.pos});
+    }
 }
 
 Game.Tile.tree.prototype.updateGlyph = function() {
@@ -179,10 +184,48 @@ Game.Tile.tree.prototype.getHarvest = function() {
     }
 
     return output;
-}
+};
 
 Game.Tile.tree.prototype.getAura = function() {
     var aura = {}
     aura[this.species.aura_stat] = this.stage.aura_strength;
     return aura;
-}
+};
+
+Game.Tile.tree.prototype.handleInput = function(inputType, inputData) {
+    var keyCode = inputData.keyCode;
+    if (inputType === 'keypress' && inputData.charCode !== undefined) {
+        var character = String.fromCharCode(inputData.charCode);
+    }
+
+    if (inputType === 'click') { return; }
+
+    if (this.mode === 'harvestAt' && character !== undefined) {
+        // TODO: ParseInt()
+        switch (character) {
+            case '1':
+                this.harvestAt = 1;
+                break;
+            case '2':
+                this.harvestAt = 2;
+                break;
+            case '3':
+                this.harvestAt = 3;
+                break;
+            case '4':
+                this.harvestAt = 4;
+                break;
+            case '-':
+                delete this.harvestAt;
+                break;
+        }
+    } else {
+        if (character === '@') {
+            this.mode = 'harvestAt';
+        } if (keyCode === ROT.VK_ESCAPE) {
+            return false;
+        }
+    }
+
+    return true;
+};
