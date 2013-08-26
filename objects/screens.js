@@ -106,7 +106,7 @@ Game.Screen.playScreen = {
             }
         }
 
-        var statusText = '---';
+        var statusText;
 
         var cMode = Game.getCommandMode();
         
@@ -121,7 +121,18 @@ Game.Screen.playScreen = {
                 statusText = "To build a workshop (10 wood required), press 'o'";
                 break;
             case 'interact':
-                statusText = "Press 'c' to create new units, then the unit type (w).";
+                var selected = Game.Map.getSelected();
+
+                if (selected.isEntity) {
+                    if (selected.type === 'unit') {
+                        statusText = 'Click to issue a move order, escape to exit interact mode.';
+                    } else if (selected.type === 'building') {
+                        statusText = "Press 'c' to create new units, then the unit type (w).";
+                    }
+                } else {
+                    statusText = '???';
+                }
+                
                 break;
             default:
                 statusText = "Command mode: " + cMode;
