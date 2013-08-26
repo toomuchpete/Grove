@@ -296,6 +296,11 @@ Game.Unit = (function(self){
         return unit; 
     };
 
+    // User Interface Code:
+    self.getStatusBarText = function() {
+        return "Click: issue a move order; ESC: exit interact mode";
+    }
+
     return self;
 }({}));
 

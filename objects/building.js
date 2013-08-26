@@ -100,9 +100,9 @@ Game.Building = (function(self){
         if (inputType === 'keypress' && inputData.charCode !== undefined) {
             var character = String.fromCharCode(inputData.charCode);
         }
-        
+
         if (inputType === 'keydown') {
-            if (this.mode === 'create') {
+            if (this.mode === 'createUnit') {
                 if (keyCode === ROT.VK_ESCAPE) {
                     delete this.mode;
                 } else if (keyCode === ROT.VK_W) {
@@ -117,7 +117,7 @@ Game.Building = (function(self){
             } else if (keyCode === ROT.VK_ESCAPE) {
                 return false;
             } else if (keyCode === ROT.VK_C) {
-                this.mode = 'create';
+                this.mode = 'createUnit';
             }
         } else if (inputType === 'keypress') {
             if (character === '?') {
@@ -144,6 +144,14 @@ Game.Building = (function(self){
         }
 
         return unit; 
+    };
+
+    // User Interface Code:
+    self.getStatusBarText = function() {
+        if (this.mode === 'createUnit') {
+            return "w: Create Worker (limit 5); ESC: exit create mode"
+        }
+        return 'c: Create a unit; ESC: exit interact mode'
     };
 
     return self;

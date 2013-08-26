@@ -205,19 +205,23 @@ Game.Tile.tree.prototype.handleInput = function(inputType, inputData) {
         switch (character) {
             case '1':
                 this.harvestAt = 1;
-                break;
+                delete this.mode;
+                return false;
             case '2':
                 this.harvestAt = 2;
-                break;
+                delete this.mode;
+                return false;
             case '3':
                 this.harvestAt = 3;
-                break;
+                delete this.mode;
+                return false;
             case '4':
                 this.harvestAt = 4;
-                break;
+                delete this.mode;
+                return false;
             case '-':
                 delete this.harvestAt;
-                break;
+                return false;
         }
     } else {
         if (character === '@') {
@@ -228,4 +232,13 @@ Game.Tile.tree.prototype.handleInput = function(inputType, inputData) {
     }
 
     return true;
+};
+
+// User Interface Code:
+Game.Tile.tree.prototype.getStatusBarText = function() {
+    if (this.mode === 'harvestAt') {
+        return "1-4: schedule harvest for stage; -: clears schedule; ESC: exit interact mode";
+    }
+
+    return "@: schedule a harvest; ESC: exit interact mode";
 };

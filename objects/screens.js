@@ -123,17 +123,23 @@ Game.Screen.playScreen = {
             case 'interact':
                 var selected = Game.Map.getSelected();
 
-                if (selected.isEntity) {
-                    if (selected.type === 'unit') {
-                        statusText = 'Click to issue a move order, escape to exit interact mode.';
-                    } else if (selected.type === 'building') {
-                        statusText = "Press 'c' to create new units, then the unit type (w).";
-                    }
+                if (selected.getStatusBarText !== undefined) {
+                    statusText = selected.getStatusBarText();    
                 } else {
-                    statusText = '???';
+                    var displayType;
+
+                    if (selected.subtype !== undefined) {
+                        displayType = selected.subtype;
+                    } else if (selected.type !== undefined) {
+                        displayType = selected.type;
+                    }
+
+                    statusText = "Interacting with: " + displayType;
                 }
-                
-                break;
+
+                if (statusText !== undefined) {
+                    break;    
+                }
             default:
                 statusText = "Command mode: " + cMode;
                 break;
