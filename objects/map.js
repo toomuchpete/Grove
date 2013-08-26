@@ -69,20 +69,7 @@ Game.Map = (function(self){
         }
 
         var newSelectedX = this.selection.x + dx;
-
-        // if (newSelectedX >= width) {
-        //     newSelectedX = width-1;
-        // } else if (newSelectedX < 0) {
-        //     newSelectedX = 0;
-        // }
-
         var newSelectedY = this.selection.y + dy;
-
-        // if (newSelectedY >= height) {
-        //     newSelectedY = height-1;
-        // } else if (newSelectedY < 0) {
-        //     newSelectedY = 0;
-        // }
 
         this.select(newSelectedX, newSelectedY);
     };
